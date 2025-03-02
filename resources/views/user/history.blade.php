@@ -1,4 +1,3 @@
-{{-- todo: use pagination --}}
 @extends('layouts.user')
 
 @section('content')
@@ -65,9 +64,13 @@
                         </div>
                     </div>
                 @endforeach
+                <div class="d-flex justify-content-center mt-4">
+                    {{ $transaksi->links() }}
+                </div>
             </div>
 
         </div>
+    </div>
 
         <!-- Pagination -->
         {{-- <nav class="mt-4">

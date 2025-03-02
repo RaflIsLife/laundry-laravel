@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +22,7 @@
         .sidebar {
             background: var(--primary-color);
             min-height: 100vh;
-            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
             position: fixed;
             width: 280px;
         }
@@ -56,7 +57,7 @@
             border: none;
             border-radius: 15px;
             transition: transform 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         .order-card:hover {
@@ -90,6 +91,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container-fluid p-0">
         <!-- Sidebar -->
@@ -102,16 +104,16 @@
             </div>
 
             <nav class="nav flex-column">
-                <a class="nav-link" href="{{route('user')}}">
+                <a class="nav-link" href="{{ route('user') }}">
                     <i class="bi bi-basket me-3"></i> Pesanan
                 </a>
                 <a class="nav-link" href="{{ route('pesananBaru') }}">
                     <i class="bi bi-basket3 me-3"></i> Pesanan Baru
                 </a>
-                <a class="nav-link" href="{{route('history')}}">
+                <a class="nav-link" href="{{ route('history') }}">
                     <i class="bi bi-clock-history me-3"></i> Riwayat
                 </a>
-                <a class="nav-link" href="{{route('profile')}}">
+                <a class="nav-link" href="{{ route('profile') }}">
                     <i class="bi bi-person-circle me-3"></i> Profil
                 </a>
                 <hr>
@@ -131,9 +133,11 @@
     <script src="../../js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
 
     <script>
         new DataTable('#dataTables');
     </script>
 </body>
+
 </html>

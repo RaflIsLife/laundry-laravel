@@ -4,14 +4,6 @@
     <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Riwayat Pesanan</h2>
-            <div class="d-flex">
-                <input type="text" class="form-control me-2" placeholder="Cari pesanan...">
-                <select class="form-select" style="width: 200px;">
-                    <option>Filter Pembayaran</option>
-                    <option>Qris</option>
-                    <option>COD</option>
-                </select>
-            </div>
         </div>
 
         <div class="card shadow-sm">

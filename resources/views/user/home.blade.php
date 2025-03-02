@@ -53,6 +53,9 @@
                     </div>
                 </div>
             @endforeach
+            <div class="d-flex justify-content-center mt-4">
+                {{ $transaksi->links() }}
+            </div>
 
         </div>
     </div>

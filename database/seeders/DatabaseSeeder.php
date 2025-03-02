@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Custom',
             'email' => 'user@gmail.com',
             'phone' => '082120467500',
+            'address' => 'Jl. Jalan',
             'password' => bcrypt(123),
             'role' => 'customer'
          ]);
@@ -31,6 +32,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Custom2',
             'email' => 'user2@gmail.com',
             'phone' => '082120467510',
+            'address' => 'Jl. Jalan',
             'password' => bcrypt(123),
             'role' => 'customer'
          ]);
@@ -103,7 +105,7 @@ class DatabaseSeeder extends Seeder
             'user_id' => 1,
             'total_harga'=> 80000,
             'qty' => 2,
-            'status' => 'menunggu pengambilan',
+            'status' => 'menunggu pengantaran',
             'pembayaran'=>'cod',
             'status_pembayaran'=>'lunas'
          ]);
@@ -121,6 +123,110 @@ class DatabaseSeeder extends Seeder
             'qty' =>3,
             'type_qty' => 'pcs'
          ]);
+
+
+
+
+         Transaksi::create([
+            'user_id' => 1,
+            'total_harga'=> 80000,
+            'qty' => 2,
+            'status' => 'selesai',
+            'pembayaran'=>'cod',
+            'status_pembayaran'=>'lunas'
+         ]);
+         TransaksiLayanan::create([
+            'transaksi_id' => 2,
+            'layanan_id' => 1,
+            'harga'=> 20000,
+            'qty' => 2,
+            'type_qty' => 'kg'
+         ]);
+         TransaksiLayanan::create([
+            'transaksi_id' => 2,
+            'layanan_id' => 2,
+            'harga'=> 60000,
+            'qty' =>3,
+            'type_qty' => 'pcs'
+         ]);
+
+
+
+         Transaksi::create([
+            'user_id' => 1,
+            'total_harga'=> 85000,
+            'qty' => 2,
+            'status' => 'menunggu pengambilan',
+            'pembayaran'=>'cod',
+            'status_pembayaran'=>'proses'
+         ]);
+         TransaksiLayanan::create([
+            'transaksi_id' => 3,
+            'layanan_id' => 1,
+            'harga'=> 25000,
+            'qty' => 2,
+            'type_qty' => 'kg'
+         ]);
+         TransaksiLayanan::create([
+            'transaksi_id' => 3,
+            'layanan_id' => 2,
+            'harga'=> 60000,
+            'qty' =>3,
+            'type_qty' => 'pcs'
+         ]);
+
+
+
+         Transaksi::create([
+            'user_id' => 1,
+            'total_harga'=> 80000,
+            'qty' => 2,
+            'status' => 'proses laundry',
+            'pembayaran'=>'qris',
+            'status_pembayaran'=>'lunas'
+         ]);
+         TransaksiLayanan::create([
+            'transaksi_id' => 4,
+            'layanan_id' => 1,
+            'harga'=> 20000,
+            'qty' => 2,
+            'type_qty' => 'kg'
+         ]);
+         TransaksiLayanan::create([
+            'transaksi_id' => 4,
+            'layanan_id' => 2,
+            'harga'=> 60000,
+            'qty' =>3,
+            'type_qty' => 'pcs'
+         ]);
+
+
+
+         Transaksi::create([
+            'user_id' => 1,
+            'total_harga'=> 80000,
+            'qty' => 2,
+            'status' => 'selesai',
+            'pembayaran'=>'qris',
+            'status_pembayaran'=>'lunas'
+         ]);
+         TransaksiLayanan::create([
+            'transaksi_id' => 5,
+            'layanan_id' => 1,
+            'harga'=> 20000,
+            'qty' => 2,
+            'type_qty' => 'kg'
+         ]);
+         TransaksiLayanan::create([
+            'transaksi_id' => 5,
+            'layanan_id' => 2,
+            'harga'=> 60000,
+            'qty' =>3,
+            'type_qty' => 'pcs'
+         ]);
+
+
+
 
     }
 }

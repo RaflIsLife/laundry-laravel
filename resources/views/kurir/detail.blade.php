@@ -16,10 +16,13 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="mb-3">
-                                <h4 class="fw-bold">John Doe</h4>
-                                <p class="mb-1">Jl. Sudirman No. 123, Gedung Plaza Lt. 5</p>
-                                <p class="mb-1">Kec. Menteng, Jakarta Pusat</p>
-                                <p class="text-muted"><small><i class="bi bi-telephone"></i> 0812-3456-7890</small></p>
+                                <h4 class="fw-bold">{{ $transaksi->user->name }}</h4>
+                                <p class="mb-1">{{ $transaksi->user->address }}</p>
+                                <a class="text-muted" href="http://wa.me/62{{ ltrim($transaksi->user->phone, 0, ) }}">
+                                    <small class="d-flex align-items-center">
+                                        <i class="bi bi-whatsapp pr-2"></i>{{ $transaksi->user->phone }}
+                                    </small>
+                                </a>
                             </div>
 
 
@@ -44,16 +47,22 @@
                     <h5 class="mb-3"><i class="bi bi-clipboard-data"></i> Detail Pesanan</h5>
                     <dl class="row">
                         <dt class="col-sm-4">No. Pesanan</dt>
-                        <dd class="col-sm-8">LAUNDRY-001234</dd>
+                        <dd class="col-sm-8">#LAU-{{ $transaksi->id }}</dd>
 
                         <dt class="col-sm-4">Tanggal Masuk</dt>
-                        <dd class="col-sm-8">15 Maret 2024 10:00 WIB</dd>
+                        <dd class="col-sm-8">{{ $transaksi->created_at }}</dd>
 
                         <dt class="col-sm-4">Type Layanan</dt>
                         <dd class="col-sm-8">
-                            <span class="badge bg-primary">Pakaian + Sprei</span>
+                            <span class="badge bg-primary">
+                                @foreach ($transaksiLayanan as $items)
+                                    {{ $items->layanan->nama_layanan }} @if (!$loop->last)
+                                        +
+                                    @endif
+                                @endforeach
+                            </span>
                         </dd>
-{{--
+                        {{--
                         <dt class="col-sm-4">Total Berat</dt>
                         <dd class="col-sm-8">4.5 kg</dd> --}}
                     </dl>
@@ -64,15 +73,31 @@
                 <div class="border rounded p-3 bg-white h-100">
                     <h5 class="mb-3"><i class="bi bi-wallet2"></i> Pembayaran</h5>
                     <dl class="row">
-                        <dt class="col-sm-4">Qris</dt>
-                        <dd class="col-sm-8">Rp 85.000,-</dd>
-
-
                         <dt class="col-sm-4">Metode Pembayaran</dt>
-                        <dd class="col-sm-8">Transfer Bank</dd>
+                        <dd class="col-sm-8">{{ ucwords($transaksi->pembayaran) }}</dd>
+
+                        <dt class="col-sm-4">Harga</dt>
+                        <dd class="col-sm-8">Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }},-</dd>
+
+                        @if ($transaksi->pembayaran == 'cod')
+                            <div class="row align-items-center">
+                                <dt class="col-sm-4">Status COD</dt>
+                                <div class="col-sm-8">
+                                    @if ($transaksi->status_pembayaran == 'proses')
+                                        <button class="btn btn-success">
+                                            <i class="bi bi-check2-circle"></i> Tandai Pembayaran Selesai
+                                        </button>
+                                    @elseif($transaksi->status_pembayaran == 'lunas')
+                                        <dd class="col-sm-8">Lunas</dd>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+
                     </dl>
                 </div>
             </div>
+
         </div>
 
         <!-- Action Button -->

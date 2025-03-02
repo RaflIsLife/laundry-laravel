@@ -86,7 +86,7 @@ class UserController extends Controller
 
     public function user(Request $request)
     {
-        $transaksi = Transaksi::where('user_id', Auth::id())->whereNotIn('status', ['selesai'])->get();
+        $transaksi = Transaksi::where('user_id', Auth::id())->whereNotIn('status', ['selesai'])->paginate(10);
         return view('user/home', compact('transaksi'));
     }
     public function detailPesanan(Request $request, Transaksi $transaksi)
@@ -173,7 +173,7 @@ class UserController extends Controller
 
     public function history(Request $request)
     {
-        $transaksi = Transaksi::where('user_id', Auth::id())->where('status', 'selesai')->get();
+        $transaksi = Transaksi::where('user_id', Auth::id())->where('status', 'selesai')->paginate(10);
         return view('user/history', compact('transaksi'));
     }
     public function detailRiwayat(Transaksi $transaksi)

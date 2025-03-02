@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name') }} - Dashboard</title>
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../bootstrap-icons-1.8.1/bootstrap-icons.css">
+    <link href="../../../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../bootstrap-icons-1.8.1/bootstrap-icons.css">
     <style>
         :root {
             --primary-color: #ffffff;
@@ -117,9 +117,6 @@
                 <a class="nav-link" href="{{route('kurir')}}">
                     <i class="bi bi-house-door me-3"></i> Beranda
                 </a>
-                <a class="nav-link" href="{{ route('kurir.detail') }}">
-                    <i class="bi bi-basket me-3"></i> Detail
-                </a>
                 <form method="POST" action=" {{ route('logout') }} ">
                     @csrf
                     <button type="submit" class="nav-link w-100 text-start">
@@ -133,6 +130,6 @@
         @yield('content')
     </div>
 
-    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../../../js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

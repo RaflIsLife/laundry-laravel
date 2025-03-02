@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
     });
     Route::post('/logout', 'UserController@logout')->name('logout');
     Route::get('/kurir', 'KurirController@home')->name('kurir');
-    Route::get('/kurir/detail', 'KurirController@detail')->name('kurir.detail');
+    Route::get('/kurir/detail/{transaksi}', 'KurirController@detail')->name('kurir.detail');
 
     Route::get('/kasir', 'KasirController@kasir')->name('kasir');
     Route::post('/postKasir', 'KasirController@postKasir')->name('postKasir');
