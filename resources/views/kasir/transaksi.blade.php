@@ -12,14 +12,14 @@
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover" id="dataTables">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>ID</th>
                                 <th>Nama Pelanggan</th>
                                 <th>Nomor Whatsapp</th>
-                                <th>Total</th>
                                 <th>Tanggal Pemesanan</th>
+                                <th>Total</th>
                                 <th>Cara Pemesanan</th>
                                 <th>Status</th>
                                 <th>Aksi</th>

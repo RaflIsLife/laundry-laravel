@@ -6,6 +6,7 @@
     <title>{{ config('app.name') }} - Dashboard</title>
     <link href="../../css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../bootstrap-icons-1.8.1/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
     <style>
         :root {
             --primary-color: #ffffff;
@@ -128,5 +129,11 @@
     </div>
 
     <script src="../../js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+
+    <script>
+        new DataTable('#dataTables');
+    </script>
 </body>
 </html>

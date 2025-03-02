@@ -1,4 +1,5 @@
 <!-- Main Content -->
+{{-- todo: use pagination --}}
 @extends('layouts.user')
 
 @section('content')

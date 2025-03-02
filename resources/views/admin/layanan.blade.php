@@ -18,14 +18,16 @@
         <div class="card shadow-sm">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover" id="dataTables">
                         <thead class="table-light">
                             <tr>
                                 <th>ID</th>
                                 <th>Nama Layanan</th>
-                                <th>Harga</th>
+                                <th>Harga per/pcs</th>
+                                <th>Harga per/kg</th>
                                 <th>Created at</th>
                                 <th>Updated at</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -34,7 +36,8 @@
                                 <tr>
                                     <td>{{ $item->id }}</td>
                                     <td>{{ $item->nama_layanan }}</td>
-                                    <td>{{ $item->harga }}</td>
+                                    <td>Rp {{ number_format($item->harga_pcs, 0, ',', '.') }} </td>
+                                    <td>Rp {{ number_format($item->harga_kg, 0, ',', '.') }}</td>
                                     <td>{{ $item->created_at }}</td>
                                     <td>{{ $item->updated_at }}</td>
                                     <td>

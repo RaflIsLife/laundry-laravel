@@ -105,7 +105,7 @@
                 <h5 class="fw-bold mb-4">Detail Layanan</h5>
 
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="dataTables">
                         <thead class="table-light">
                             <tr>
                                 <th>Jenis Layanan</th>

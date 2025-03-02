@@ -12,14 +12,14 @@
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover" id="dataTables">
                         <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Nama Pelanggan</th>
                                 <th>Nomor Whatsapp</th>
-                                <th>Total</th>
                                 <th>Tanggal Selesai</th>
+                                <th>Total</th>
                                 <th>Cara Pemesanan</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
@@ -28,11 +28,11 @@
                         <tbody>
                             @foreach ($transaksi as $item)
                                 <tr>
-                                    <td>{{ $item->id }}</td>
+                                    <td>{{ $item->id }}</td>    
                                     <td>{{ $item->user->name }}</td>
                                     <td>{{ $item->user->phone }}</td>
-                                    <td>Rp {{ number_format($item->total_harga) }}</td>
                                     <td>{{ $item->updated_at }}</td>
+                                    <td>Rp {{ number_format($item->total_harga) }}</td>
                                     <td>
                                         <span
                                             class="badge bg-{{ $item->cara_pemesanan == 'offline' ? 'success' : 'primary' }}">

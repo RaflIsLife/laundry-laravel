@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Laundry</title>
+    <title>Kasir Dashboard - Laundry</title>
     <link href="../../../css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="../../../bootstrap-icons-1.8.1/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
     <style>
 
 
@@ -133,5 +133,11 @@
     </div>
 
     <script src="../../../js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+
+    <script>
+        new DataTable('#dataTables');
+    </script>
 </body>
 </html>

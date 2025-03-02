@@ -97,13 +97,15 @@ class AdminController extends Controller
     {
         $cek = $request->validate([
             'nama_layanan' => 'required',
-            'harga' => 'required',
+            'harga_pcs' => 'required',
+            'harga_kg' => 'required',
         ]);
 
         //    logs($request->all());
         Layanan::create([
             'nama_layanan' => $request->nama_layanan,
-            'harga' => $request->harga,
+            'harga_pcs' => $request->harga_pcs,
+            'harga_kg' => $request->harga_kg,
         ]);
 
         return redirect()->route('admin.layanan')->with('status', 'Berhasil Menambah Layanan');

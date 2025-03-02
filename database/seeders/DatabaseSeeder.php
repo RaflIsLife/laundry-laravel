@@ -21,61 +21,83 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
 
         User::create([
-            'name' => 'Rafli Custom',
-            'email' => 'r@fli.com',
+            'name' => 'Custom',
+            'email' => 'user@gmail.com',
             'phone' => '082120467500',
             'password' => bcrypt(123),
             'role' => 'customer'
          ]);
         User::create([
-            'name' => 'Rafli Custom2',
-            'email' => 'r@flyii.com',
+            'name' => 'Custom2',
+            'email' => 'user2@gmail.com',
             'phone' => '082120467510',
             'password' => bcrypt(123),
             'role' => 'customer'
          ]);
         User::create([
-            'name' => 'Rafli Kasir',
-            'email' => 'r@flu.com',
+            'name' => 'Kasir',
+            'email' => 'kasir@gmail.com',
             'phone' => '082120467501',
             'password' => bcrypt(123),
             'role' => 'kasir'
          ]);
         User::create([
-            'name' => 'Rafli Owner',
-            'email' => 'r@fpoli.com',
+            'name' => 'Owner',
+            'email' => 'owner@gmail.com',
             'phone' => '082120467502',
             'password' => bcrypt(123),
             'role' => 'owner'
          ]);
         User::create([
-            'name' => 'Rafli Admin',
-            'email' => 'r@pyli.com',
+            'name' => 'Admin',
+            'email' => 'admin@gmail.com',
             'phone' => '082120467503',
             'password' => bcrypt(123),
             'role' => 'admin'
          ]);
         User::create([
-            'name' => 'Rafli Kurir',
-            'email' => 'r@vli.com',
+            'name' => 'Kurir',
+            'email' => 'kurir@gmail.com',
             'phone' => '082120467504',
             'password' => bcrypt(123),
             'role' => 'kurir'
          ]);
+        User::create([
+            'name' => 'Kurir2',
+            'email' => 'kurir2@gmail.com',
+            'phone' => '082120467505',
+            'password' => bcrypt(123),
+            'role' => 'kurir'
+         ]);
         Layanan::create([
-            'nama_layanan' => 'pakaian',
+            'nama_layanan' => 'Pakaian',
             'harga_pcs' => 1500,
             'harga_kg' => 10000,
          ]);
         Layanan::create([
             'nama_layanan' => 'Sprei',
-            'harga_pcs' => 2500,
+            'harga_pcs' => 9200,
             'harga_kg' => 20000,
          ]);
         Layanan::create([
             'nama_layanan' => 'Handuk',
             'harga_pcs' => 2000,
             'harga_kg' => 15000,
+         ]);
+        Layanan::create([
+            'nama_layanan' => 'Selimut',
+            'harga_pcs' => 13200,
+            'harga_kg' => 30000,
+         ]);
+        Layanan::create([
+            'nama_layanan' => 'Bantal',
+            'harga_pcs' => 10500,
+            'harga_kg' => 27000,
+         ]);
+        Layanan::create([
+            'nama_layanan' => 'Boneka',
+            'harga_pcs' => 7000,
+            'harga_kg' => 21000,
          ]);
          Transaksi::create([
             'user_id' => 1,
