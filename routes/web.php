@@ -40,6 +40,8 @@ Route::middleware('auth')->group(function () {
     });
     Route::post('/logout', 'UserController@logout')->name('logout');
     Route::get('/kurir', 'KurirController@home')->name('kurir');
+    Route::post('/kurir/mark-paid/{transaksi}', 'KurirController@markPaid')->name('kurir.mark-paid');
+    Route::post('/kurir/complete-order/{transaksi}', 'KurirController@completeOrder')->name('kurir.complete-order');
     Route::get('/kurir/detail/{transaksi}', 'KurirController@detail')->name('kurir.detail');
 
     Route::get('/kasir', 'KasirController@kasir')->name('kasir');

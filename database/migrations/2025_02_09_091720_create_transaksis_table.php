@@ -16,6 +16,7 @@ class CreateTransaksisTable extends Migration
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('courier_id')->nullable()->constrained('users')->onDelete('set null');
             $table->integer('total_harga');
             $table->integer('qty');
             $table->enum('status', ['menunggu pengambilan', 'menunggu pengantaran', 'pengambilan','antrian laundry', 'proses laundry', 'pengantaran', 'selesai']);

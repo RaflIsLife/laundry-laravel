@@ -101,6 +101,39 @@ class UserController extends Controller
         return view('user/pesanan_baru', compact('layanan'));
     }
 
+    public function assignPendingOrders()
+{
+    // Ambil transaksi yang belum memiliki kurir (diurutkan dari yang paling lama)
+    $pendingOrders = Transaksi::whereNull('courier_id')
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+    foreach ($pendingOrders as $order) {
+        // Cari kurir tersedia dengan pesanan selesai paling sedikit
+        $availableCourier = User::where('role', 'kurir')
+            ->where('status', 'available')
+            ->orderBy('daily_completed_orders', 'asc')
+            ->first();
+
+        if ($availableCourier) {
+            // Assign ke kurir
+            $order->courier_id = $availableCourier->id;
+            if ($order->status == 'menunggu pengambilan') {
+                $order->status = 'pengambilan';
+            } else if ($order->status == 'menunggu pengantaran') {
+                $order->status = 'pengantaran';
+            }
+            $order->save();
+
+            // Update status kurir
+            $availableCourier->status = 'on_delivery';
+            $availableCourier->save();
+
+            break; // Hanya assign satu pesanan per eksekusi
+        }
+    }
+}
+
     public function postPesanan(Request $request)
 {
     $data = $request->validate([
@@ -164,6 +197,8 @@ class UserController extends Controller
         'total_harga' => $totalHarga,
         'qty'         => $totalJumlah,
     ]);
+
+    $this->assignPendingOrders();
 
     return redirect()->route('user')->with('success', 'Pesanan berhasil dibuat!');
 }

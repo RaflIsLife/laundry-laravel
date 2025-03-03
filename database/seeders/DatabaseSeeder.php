@@ -62,14 +62,16 @@ class DatabaseSeeder extends Seeder
             'email' => 'kurir@gmail.com',
             'phone' => '082120467504',
             'password' => bcrypt(123),
-            'role' => 'kurir'
+            'role' => 'kurir',
+            'status' => 'on_delivery',
          ]);
         User::create([
             'name' => 'Kurir2',
             'email' => 'kurir2@gmail.com',
             'phone' => '082120467505',
             'password' => bcrypt(123),
-            'role' => 'kurir'
+            'role' => 'kurir',
+            'status' => 'on_delivery',
          ]);
         Layanan::create([
             'nama_layanan' => 'Pakaian',
@@ -105,9 +107,10 @@ class DatabaseSeeder extends Seeder
             'user_id' => 1,
             'total_harga'=> 80000,
             'qty' => 2,
-            'status' => 'menunggu pengantaran',
+            'status' => 'pengantaran',
             'pembayaran'=>'cod',
-            'status_pembayaran'=>'lunas'
+            'status_pembayaran'=>'lunas',
+            'courier_id' => 6
          ]);
          TransaksiLayanan::create([
             'transaksi_id' => 1,
@@ -133,7 +136,8 @@ class DatabaseSeeder extends Seeder
             'qty' => 2,
             'status' => 'selesai',
             'pembayaran'=>'cod',
-            'status_pembayaran'=>'lunas'
+            'status_pembayaran'=>'lunas',
+            'courier_id' => 6
          ]);
          TransaksiLayanan::create([
             'transaksi_id' => 2,
@@ -156,9 +160,10 @@ class DatabaseSeeder extends Seeder
             'user_id' => 1,
             'total_harga'=> 85000,
             'qty' => 2,
-            'status' => 'menunggu pengambilan',
+            'status' => 'pengambilan',
             'pembayaran'=>'cod',
-            'status_pembayaran'=>'proses'
+            'status_pembayaran'=>'proses',
+            'courier_id' => 7
          ]);
          TransaksiLayanan::create([
             'transaksi_id' => 3,
@@ -183,7 +188,8 @@ class DatabaseSeeder extends Seeder
             'qty' => 2,
             'status' => 'proses laundry',
             'pembayaran'=>'qris',
-            'status_pembayaran'=>'lunas'
+            'status_pembayaran'=>'lunas',
+            'courier_id' => 7
          ]);
          TransaksiLayanan::create([
             'transaksi_id' => 4,
@@ -208,7 +214,8 @@ class DatabaseSeeder extends Seeder
             'qty' => 2,
             'status' => 'selesai',
             'pembayaran'=>'qris',
-            'status_pembayaran'=>'lunas'
+            'status_pembayaran'=>'lunas',
+            'courier_id' => 6
          ]);
          TransaksiLayanan::create([
             'transaksi_id' => 5,

@@ -8,7 +8,7 @@
 
             <form action="{{ route('postRegister') }}" method="POST" class="auth-form">
                 @csrf
-               
+
                 <div class="mb-3">
                     <label for="name" class="form-label">Nama lengkap</label>
                     <input id="name" type="text" class="form-control @error('name') is-invalid @enderror"
@@ -46,7 +46,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">Nomor Telepon</label>
+                    <label class="form-label">Nomor WhatsApp</label>
                     <input type="tel" class="form-control @error('phone') is-invalid @enderror" name="phone"
                         pattern="[0-9]{9,13}" required>
                     @error('phone')

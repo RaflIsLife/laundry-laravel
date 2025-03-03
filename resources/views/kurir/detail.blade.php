@@ -4,7 +4,13 @@
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
             <div>
-                <h1 class="h2">Detail Pengantaran</h1>
+                <h1 class="h2">Detail
+                    @if ($transaksi->status == 'menunggu pengambilan')
+                        Pengambilan
+                    @elseif ($transaksi->status == 'menunggu pengantaran')
+                        Pengantaran
+                    @endif
+                </h1>
             </div>
         </div>
 
@@ -18,7 +24,7 @@
                             <div class="mb-3">
                                 <h4 class="fw-bold">{{ $transaksi->user->name }}</h4>
                                 <p class="mb-1">{{ $transaksi->user->address }}</p>
-                                <a class="text-muted" href="http://wa.me/62{{ ltrim($transaksi->user->phone, 0, ) }}">
+                                <a class="text-muted" href="http://wa.me/62{{ ltrim($transaksi->user->phone, 0) }}">
                                     <small class="d-flex align-items-center">
                                         <i class="bi bi-whatsapp pr-2"></i>{{ $transaksi->user->phone }}
                                     </small>
@@ -79,19 +85,13 @@
                         <dt class="col-sm-4">Harga</dt>
                         <dd class="col-sm-8">Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }},-</dd>
 
-                        @if ($transaksi->pembayaran == 'cod')
-                            <div class="row align-items-center">
-                                <dt class="col-sm-4">Status COD</dt>
-                                <div class="col-sm-8">
-                                    @if ($transaksi->status_pembayaran == 'proses')
-                                        <button class="btn btn-success">
-                                            <i class="bi bi-check2-circle"></i> Tandai Pembayaran Selesai
-                                        </button>
-                                    @elseif($transaksi->status_pembayaran == 'lunas')
-                                        <dd class="col-sm-8">Lunas</dd>
-                                    @endif
-                                </div>
-                            </div>
+                        @if ($transaksi->pembayaran == 'cod' && $transaksi->status_pembayaran == 'proses')
+                            <form action="{{ route('kurir.mark-paid', $transaksi) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check2-circle"></i> Tandai Pembayaran Selesai
+                                </button>
+                            </form>
                         @endif
 
                     </dl>
@@ -107,9 +107,15 @@
                     <div class="col-12">
                         <div class="d-flex gap-2 justify-content-end">
 
-                            <button class="btn btn-success btn-lg">
-                                <i class="bi bi-check2-circle"></i> Tandai Selesai
-                            </button>
+                            @if (in_array($transaksi->status, ['menunggu pengambilan', 'pengambilan', 'menunggu pengantaran', 'pengantaran']))
+                                <form action="{{ route('kurir.complete-order', $transaksi) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        <i class="bi bi-check2-circle"></i> Tandai Selesai
+                                    </button>
+                                </form>
+                            @endif
+
                         </div>
                     </div>
                 </div>
