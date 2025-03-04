@@ -36,8 +36,8 @@
                         <div class="col-md-4">
                             <!-- Tempat untuk map integration -->
                             <div class="ratio ratio-1x1 bg-secondary rounded">
-                                <div class="d-flex align-items-center justify-content-center text-white">
-                                    <i class="bi bi-map fs-1"></i>
+                                <div class="d-flex align-items-center justify-content-center text-white" id="map">
+
                                 </div>
                             </div>
                         </div>
@@ -45,6 +45,55 @@
                 </div>
             </div>
         </div>
+
+        <div class="row mb-4 g-3">
+            <div class="col-12 mb-3">
+                <div class="border rounded p-3 bg-white">
+                    <h2 class="mb-3 fw-bold"></i> Detail Layanan</h2>
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table class="table stripe" id="dataTables">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Jenis Layanan</th>
+                                        <th>Kuantitas</th>
+                                        <th>Harga Satuan</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($transaksiLayanan as $item)
+                                        <tr>
+                                            <td>{{ $item->layanan->nama_layanan }}</td>
+                                            <td>
+                                                {{ $item->qty }}
+                                                <span class="text-muted">{{ $item->type_qty }}</span>
+                                            </td>
+                                            <td>
+                                                @if ($item->type_qty == 'pcs')
+
+                                                Rp {{ number_format($item->layanan->harga_pcs, 0, ',', '.') }}
+                                               @else
+                                                Rp {{ number_format($item->layanan->harga_kg, 0, ',', '.') }}
+                                                @endif
+                                            </td>
+                                            <td>Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <td colspan="3" class="text-end fw-bold">Total</td>
+                                        <td class="fw-bold">Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <!-- Order Details -->
         <div class="row g-3 mb-5">
@@ -78,12 +127,10 @@
             <div class="col-xl-6 col-lg-12">
                 <div class="border rounded p-3 bg-white h-100">
                     <h5 class="mb-3"><i class="bi bi-wallet2"></i> Pembayaran</h5>
-                    <dl class="row">
-                        <dt class="col-sm-4">Metode Pembayaran</dt>
-                        <dd class="col-sm-8">{{ ucwords($transaksi->pembayaran) }}</dd>
-
-                        <dt class="col-sm-4">Harga</dt>
-                        <dd class="col-sm-8">Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }},-</dd>
+                    <dl class="row d-flex">
+                        <div class="col-md-6">
+                        <dt class="col-sm-6">Metode Pembayaran</dt>
+                        <dd class="col-sm-6">{{ ucwords($transaksi->pembayaran) }}</dd>
 
                         @if ($transaksi->pembayaran == 'cod' && $transaksi->status_pembayaran == 'proses')
                             <form action="{{ route('kurir.mark-paid', $transaksi) }}" method="POST">
@@ -92,8 +139,26 @@
                                     <i class="bi bi-check2-circle"></i> Tandai Pembayaran Selesai
                                 </button>
                             </form>
-                        @endif
+                            @else
+                            <dt class="col-sm-4">Subtotal</dt>
+                        <dd class="col-sm-8">Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }},-</dd>
 
+                        @endif
+                        </div>
+                        <div class="col-md-6">
+
+                            @if ($transaksi->pembayaran == 'cod' && $transaksi->status_pembayaran == 'proses')
+                        <dt class="col-sm-4">Subtotal</dt>
+                        <dd class="col-sm-8">Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }},-</dd>
+                            @endif
+                        <dt class="col-sm-4">Total Ongkir</dt>
+                        <dd class="col-sm-8">Rp {{ number_format($transaksi->ongkir, 0, ',', '.') }},-</dd>
+
+                        <dt class="col-sm-4">Total Harga</dt>
+                        <dd class="col-sm-8 fs-5"><span class="badge bg-secondary">Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }},- </span></dd>
+
+
+                        </div>
                     </dl>
                 </div>
             </div>
@@ -119,8 +184,54 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        new DataTable('#dataTables');
+
+        var latUser = {{ explode(',', $transaksi->user->address)[0] }};
+        var lngUser = {{ explode(',', $transaksi->user->address)[1] }};
+        const addressUser = '{{ $transaksi->user->address }}';
+
+        var latCompany = {{ explode(',', $companyProfile->address)[0] }};
+        var lngCompany = {{ explode(',', $companyProfile->address)[1] }};
+        const addressCompany = '{{ $companyProfile->address }}';
+
+        var map = L.map('map').setView([latCompany, lngCompany], 17); // Set lokasi awal dari database
+
+        var Stadia_OSMBright = L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.{ext}', {
+            minZoom: 0,
+            maxZoom: 20,
+            attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            ext: 'png'
+        }).addTo(map);
+
+        var marker = L.marker([latUser, lngUser]).addTo(map)
+        var marker = L.marker([latCompany, lngCompany]).addTo(map)
+
+        var requestOptions = {
+            method: 'GET',
+        };
+        const myAPIKey = env('GEOAPIFY_API_KEY');
+        const url =
+            `https://api.geoapify.com/v1/routing?waypoints=${addressCompany}|${addressUser}&mode=motorcycle&details=instruction_details&apiKey=${myAPIKey}`;
+
+        fetch(url).then(res => res.json()).then(result => {
+            L.geoJSON(result, {
+                style: (feature) => {
+                    return {
+                        color: "rgba(20, 137, 255, 0.7)",
+                        weight: 5
+                    };
+                }
+            }).bindPopup((layer) => {
+                return `${layer.feature.properties.distance} ${layer.feature.properties.distance_units}, ${layer.feature.properties.time}`
+            }).addTo(map);
+
+        }, error => console.log(err));
+    </script>
+@endpush

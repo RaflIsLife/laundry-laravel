@@ -51,7 +51,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/kasir/history', 'KasirController@history')->name('kasir.history');
     Route::get('/kasir/detailPesanan/{transaksi}', 'KasirController@detailPesanan')->name('kasir.detailPesanan');
 
-    Route::get('/owner', 'OwnerController@home')->name('owner');
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/owner', 'OwnerController@home')->name('owner');
+    });
 
     Route::get('/user', 'UserController@user')->name('user');
     Route::get('/user/detailPesanan/{transaksi}', 'UserController@detailPesanan')->name('detailPesanan');

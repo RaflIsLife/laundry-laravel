@@ -22,7 +22,7 @@
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <dl class="row mb-0">
                             <dt class="col-sm-4">Nomor Pesanan</dt>
                             <dd class="col-sm-8 fw-bold text-primary">LN-{{ $transaksi->id }}</dd>
@@ -39,11 +39,25 @@
                         </dl>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <dl class="row mb-0">
-                            <dt class="col-sm-4">Total Harga</dt>
-                            <dd class="col-sm-8 fw-bold">Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</dd>
+                            <dt class="col-sm-4">SubTotal</dt>
+                            <dd class="col-sm-8 fw-bold">Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }}</dd>
 
+                            <dt class="col-sm-4">Total Ongkir</dt>
+                            <dd class="col-sm-8 fw-bold">Rp {{ number_format($transaksi->ongkir, 0, ',', '.') }}</dd>
+
+                            <dt class="col-sm-4">Total Keseluruhan</dt>
+                            <dd class="col-sm-8 fw-bold">
+                            <span class="badge bg-primary fs-5" style="height: 40px; width: 140px;">    Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}
+                            </span>
+                            </dd>
+
+                        </dl>
+                    </div>
+
+                    <div class="col-md-4">
+                        <dl class="row mb-0">
                             <dt class="col-sm-4">Metode Pembayaran</dt>
                             <dd class="col-sm-8">
                                 @if ($transaksi->pembayaran == 'qris')
@@ -109,7 +123,7 @@
                         <tfoot class="table-light">
                             <tr>
                                 <td colspan="3" class="text-end fw-bold">Total</td>
-                                <td class="fw-bold">Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
+                                <td class="fw-bold">Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }}</td>
                             </tr>
                         </tfoot>
                     </table>

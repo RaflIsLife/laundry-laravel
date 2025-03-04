@@ -41,12 +41,11 @@
                                         </select>
                                     </div>
                                 </div>
-
+                                <input class="form-control" name="ongkir" type="hidden" id="ongkir" value="0">
                                 <div class="col-md-3">
                                     <label class="form-label">Akumulasi Harga</label>
                                     <input type="text" class="form-control akumulasi-harga" readonly value="0">
                                 </div>
-
                                 <div class="col-md-1 align-self-end">
                                     <button type="button" class="btn btn-danger btn-sm hapus-item" style="display: none">
                                         <i class="bi bi-trash"></i>
@@ -62,6 +61,8 @@
 
                     <div class="row mt-3">
                         <div class="col text-end">
+                            <h5>SubTotal: <span id="total-harga-layanan">0</span></h5>
+                            <h5>Total Ongkir: <span id="ongkirView">0</span></h5>
                             <h5>Total Keseluruhan: <span id="total-keseluruhan">0</span></h5>
                         </div>
                     </div>
@@ -105,6 +106,38 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
+
+const addressUser = '{{ Auth::user()->address }}';
+const addressCompany = '{{ $companyProfile->address }}';
+
+var jarak = 0;
+
+var requestOptions = {
+    method: 'GET',
+};
+const myAPIKey = env('GEOAPIFY_API_KEY');
+const url =
+    `https://api.geoapify.com/v1/routing?waypoints=${addressCompany}|${addressUser}&mode=motorcycle&details=instruction_details&apiKey=${myAPIKey}`;
+
+async function getDistance() {
+    try {
+        const response = await fetch(url);
+        const result = await response.json();
+        const jarak = result.features[0].properties.distance;
+        return jarak;
+    } catch (error) {
+        console.log('error', error);
+    }
+}
+
+getDistance().then(jarak => {
+    // 100 meter = 200 perak
+    // ceil = membulatkan desimalke yang terdekat
+    var ongkir = Math.ceil(jarak / 100) * 200 * 2;
+
+    document.getElementById('ongkir').value =  parseInt(ongkir);
+});
+
     let nomorItem = 1;
 
     // Fungsi untuk memformat angka ke format Rupiah (tanpa desimal)
@@ -115,6 +148,7 @@ $(document).ready(function() {
     // Fungsi untuk menghitung subtotal tiap item dan total keseluruhan
     function updatePrices() {
         let total = 0;
+        let totalHargaLayanan = 0;
         $('.item-pesanan').each(function() {
             // Ambil quantity
             let quantity = parseFloat($(this).find('.quantity').val());
@@ -142,8 +176,12 @@ $(document).ready(function() {
             // Tambahkan ke total
             total += subtotal;
         });
+        totalHargaLayanan = total;
+        total += parseInt(ongkir.value);
 
         // Format total keseluruhan harga
+        $('#total-harga-layanan').text(formatRupiah(totalHargaLayanan));
+        $('#ongkirView').text(formatRupiah(parseInt(ongkir.value)));
         $('#total-keseluruhan').text(formatRupiah(total));
     }
 

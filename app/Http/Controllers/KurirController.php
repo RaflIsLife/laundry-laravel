@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompanyProfile;
 use App\Models\Transaksi;
 use App\Models\TransaksiLayanan;
 use Illuminate\Http\Request;
@@ -58,6 +59,7 @@ public function completeOrder(Request $request, Transaksi $transaksi)
 }
     public function detail(Request $request, Transaksi $transaksi){
         $transaksiLayanan = TransaksiLayanan::where('transaksi_id', $transaksi->id)->with('layanan')->get();
-        return view('kurir.detail', compact('transaksi', 'transaksiLayanan'));
+        $companyProfile = CompanyProfile::first();
+        return view('kurir.detail', compact('transaksi', 'transaksiLayanan', 'companyProfile'));
     }
 }

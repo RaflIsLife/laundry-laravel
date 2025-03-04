@@ -77,10 +77,13 @@ class AdminController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'password' => bcrypt($request->password),
             'role' => $request->role,
         ]);
-
+        if ($request->password != null) {
+        $user->update([
+            'password' => bcrypt($request->password),
+        ]);
+    }
         return redirect()->route('admin.akun')->with('success', 'User berhasil diperbarui!');
     }
 

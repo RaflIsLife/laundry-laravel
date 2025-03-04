@@ -55,13 +55,9 @@
                 </div>
                 <div class="mb-4">
                     <label for="alamat" class="form-label">Alamat</label>
-                    {{-- <div id="map"></div> --}}
-                    <input id="address" type="text" class="form-control" name="address" required>
-                    @error('address')
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-                    @enderror
+                    <div id="map" class="" style="height: 400px"></div>
+                    <input type="hidden" id="latitude" name="latitude">
+                    <input type="hidden" id="longitude" name="longitude">
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 py-2">

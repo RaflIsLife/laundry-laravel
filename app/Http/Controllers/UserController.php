@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompanyProfile;
 use App\Models\Layanan;
 use App\Models\Transaksi;
 use App\Models\TransaksiLayanan;
 use App\Models\User;
+use Faker\Provider\ar_EG\Company;
 use Hamcrest\Core\AllOf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,7 +60,8 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
             'phone' => 'required|numeric|unique:users,phone',
-            'address' => 'required',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
         ], [
             'email.unique' => 'Email sudah terpakai, mohon ganti.',
             'phone.unique' => 'Nomor HP sudah terpakai, mohon ganti.'
@@ -69,7 +72,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'phone' => $request->phone_code . $request->phone,
-            'address' => $request->address,
+            'address' => $request->latitude . ',' . $request->longitude,
         ]);
 
         return redirect()->route('login')->with('status', 'Berhasil Register, silahkan login');
@@ -98,7 +101,8 @@ class UserController extends Controller
     public function pesananBaru(Request $request)
     {
         $layanan = Layanan::all();
-        return view('user/pesanan_baru', compact('layanan'));
+        $companyProfile = CompanyProfile::first();
+        return view('user/pesanan_baru', compact('layanan', 'companyProfile'));
     }
 
     public function assignPendingOrders()
@@ -142,7 +146,9 @@ class UserController extends Controller
         'services.*.service_id' => 'required|exists:layanans,id',
         'services.*.quantity' => 'required|numeric|min:0.1',
         'services.*.unit' => 'required|string',
+        'ongkir' => 'required|int',
     ]);
+
 
     $totalHarga = 0;
     $totalJumlah = 0;
@@ -157,13 +163,14 @@ class UserController extends Controller
     // Buat transaksi baru
     $transaksi = Transaksi::create([
         'user_id' => auth()->id(),
-        'total_harga' => 0, // Sementara 0
+        'total_harga' => 0,
         'qty' => 0,
+        'subtotal' => 0,
+        'ongkir' => 0,
         'status' => 'menunggu pengambilan',
         'pembayaran' => $data['payment_method'],
         'status_pembayaran' => $statusPembayaran,
     ]);
-
     // Loop setiap pesanan layanan
     foreach ($data['services'] as $pesanan) {
         $layanan = Layanan::find($pesanan['service_id']);
@@ -191,9 +198,12 @@ class UserController extends Controller
             'harga' => $harga,
         ]);
     }
-
+    $subtotal = $totalHarga;
+    $totalHarga += $data['ongkir'];
     // Update total di transaksi
     $transaksi->update([
+        'subtotal'    => $subtotal,
+        'ongkir'      => $data['ongkir'],
         'total_harga' => $totalHarga,
         'qty'         => $totalJumlah,
     ]);
@@ -230,7 +240,8 @@ class UserController extends Controller
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             // 'password' => 'required|max:255',
             'phone' => 'required|max:255',
-            'address' => 'required|max:255',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
         ]);
 
         // Update data user
@@ -239,7 +250,7 @@ class UserController extends Controller
             'email' => $request->email,
             // 'password' => $request->password,
             'phone' => $request->phone,
-            'address' => $request->address,
+            'address' => $request->latitude . ',' . $request->longitude,
         ]);
 
         return redirect()->route('profile')->with('status', 'Profil berhasil diperbarui.');

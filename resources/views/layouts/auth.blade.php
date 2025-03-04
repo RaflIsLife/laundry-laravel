@@ -46,24 +46,39 @@
 
 
     <script src="../js/bootstrap.bundle.min.js"></script>
-    {{-- <script>
-        var map = L.map('map').setView([-6.934930, 106.925816], 15);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    <script>
+        var map = L.map('map').setView([-6.934930, 106.925816], 17);
+
+        // Tambahkan tile layer
+        var Stadia_OSMBright = L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.{ext}', {
+            minZoom: 0,
+            maxZoom: 20,
+            attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            ext: 'png'
         }).addTo(map);
 
-        var popup = L.popup
+        // Array untuk menyimpan marker
+        var markers = [];
 
-        function onMapClick(e) {
-           popup
-           .setLatLng(e.latlng)
-        .setContent(L.marker(e.latlng).addTo(map))
-        .openOn(map);
-        }
+        map.on('click', function(e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
 
-        map.on('click', onMapClick);
-    </script> --}}
+            // Hapus marker sebelumnya jika hanya ingin satu titik
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+
+            // Tambahkan marker ke peta
+            var marker = L.marker([lat, lng]).addTo(map);
+            markers.push(marker);
+
+            // Simpan koordinat ke input
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+        });
+        
+    </script>
+
 </body>
 
 </html>

@@ -1,7 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.owner')
 
 @section('content')
-    <div class="container p-4">
+<div class="container-fluid p-0">
+    <div class="main-content">
         <h2 class="mb-4">Dashboard Owner</h2>
 
         <div class="row">
@@ -10,9 +11,7 @@
                 <div class="card text-white bg-success mb-3">
                     <div class="card-header">Total Pemasukan</div>
                     <div class="card-body">
-                        <h4 class="card-title">Rp
-                            {{ number_format($transaksi->sum('total_harga'), 0, ',', '.') }}
-                        </h4>
+                        <h4 class="card-title">Rp {{ number_format($transaksi->sum('total_harga'), 0, ',', '.') }}</h4>
                     </div>
                 </div>
             </div>
@@ -27,7 +26,7 @@
                 </div>
             </div>
 
-            <!-- Kartu Pelanggan -->
+            <!-- Kartu Total Pelanggan -->
             <div class="col-md-4">
                 <div class="card text-white bg-warning mb-3">
                     <div class="card-header">Total Pelanggan</div>
@@ -35,6 +34,14 @@
                         <h4 class="card-title">{{ $user->count() }} Pelanggan</h4>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Grafik Pemasukan Bulanan -->
+        <div class="card mb-4">
+            <div class="card-header">Grafik Pemasukan Bulanan</div>
+            <div class="card-body">
+                <canvas id="pemasukanChart"></canvas>
             </div>
         </div>
 
@@ -71,4 +78,41 @@
             </div>
         </div>
     </div>
+</div>
+
+    <script>
+        // Data untuk grafik pemasukan bulanan
+        var pemasukanData = @json($grafikPemasukan); // Pastikan ini adalah array data yang diterima dari controller
+
+        // Ambil bulan dan total pemasukan
+        var bulan = pemasukanData.map(function(item) {
+            return item.bulan;
+        });
+        var totalPemasukan = pemasukanData.map(function(item) {
+            return item.total_harga;
+        });
+
+        // Buat chart
+        var ctx = document.getElementById('pemasukanChart').getContext('2d');
+        var pemasukanChart = new Chart(ctx, {
+            type: 'line', // Jenis grafik: line chart
+            data: {
+                labels: bulan,
+                datasets: [{
+                    label: 'Pemasukan Bulanan',
+                    data: totalPemasukan,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 @endsection

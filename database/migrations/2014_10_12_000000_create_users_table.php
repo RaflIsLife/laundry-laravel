@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique()->nullable();
             $table->string('password')->nullable();
             $table->string('phone')->unique()->nullable()->default('Not Provided');
-            $table->text('address')->nullable();
+            $table->string('address')->nullable();
             $table->enum('role', ['customer', 'kasir', 'owner', 'admin', 'kurir'])->default('customer');
             $table->enum('status', ['available', 'on_delivery'])->default('available');
             $table->unsignedInteger('daily_completed_orders')->default(0);

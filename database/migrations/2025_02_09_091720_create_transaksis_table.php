@@ -17,7 +17,9 @@ class CreateTransaksisTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('courier_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->integer('ongkir');
             $table->integer('total_harga');
+            $table->integer('subtotal');
             $table->integer('qty');
             $table->enum('status', ['menunggu pengambilan', 'menunggu pengantaran', 'pengambilan','antrian laundry', 'proses laundry', 'pengantaran', 'selesai']);
             $table->enum('pembayaran', ['qris', 'cod']);

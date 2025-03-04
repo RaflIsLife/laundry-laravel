@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CompanyProfile;
 use App\Models\Layanan;
 use App\Models\Transaksi;
 use App\Models\TransaksiLayanan;
@@ -24,17 +25,17 @@ class DatabaseSeeder extends Seeder
             'name' => 'Custom',
             'email' => 'user@gmail.com',
             'phone' => '082120467500',
-            'address' => 'Jl. Jalan',
             'password' => bcrypt(123),
-            'role' => 'customer'
+            'role' => 'customer',
+            'address' => '-6.917550,106.919877',
          ]);
         User::create([
             'name' => 'Custom2',
             'email' => 'user2@gmail.com',
             'phone' => '082120467510',
-            'address' => 'Jl. Jalan',
             'password' => bcrypt(123),
-            'role' => 'customer'
+            'role' => 'customer',
+            'address' => '-6.950407,106.905595',
          ]);
         User::create([
             'name' => 'Kasir',
@@ -105,12 +106,14 @@ class DatabaseSeeder extends Seeder
          ]);
          Transaksi::create([
             'user_id' => 1,
-            'total_harga'=> 80000,
+            'subtotal' => 80000,
+            'total_harga'=> 87000,
             'qty' => 2,
             'status' => 'pengantaran',
             'pembayaran'=>'cod',
             'status_pembayaran'=>'lunas',
-            'courier_id' => 6
+            'courier_id' => 6,
+            'ongkir' => 7000
          ]);
          TransaksiLayanan::create([
             'transaksi_id' => 1,
@@ -132,12 +135,14 @@ class DatabaseSeeder extends Seeder
 
          Transaksi::create([
             'user_id' => 1,
-            'total_harga'=> 80000,
+            'subtotal' => 80000,
+            'total_harga'=> 83000,
             'qty' => 2,
             'status' => 'selesai',
             'pembayaran'=>'cod',
             'status_pembayaran'=>'lunas',
-            'courier_id' => 6
+            'courier_id' => 6,
+            'ongkir' => 3000
          ]);
          TransaksiLayanan::create([
             'transaksi_id' => 2,
@@ -158,12 +163,14 @@ class DatabaseSeeder extends Seeder
 
          Transaksi::create([
             'user_id' => 1,
-            'total_harga'=> 85000,
+            'subtotal' => 85000,
+            'total_harga'=> 91000,
             'qty' => 2,
             'status' => 'pengambilan',
             'pembayaran'=>'cod',
             'status_pembayaran'=>'proses',
-            'courier_id' => 7
+            'courier_id' => 7,
+            'ongkir' => 6000
          ]);
          TransaksiLayanan::create([
             'transaksi_id' => 3,
@@ -184,12 +191,14 @@ class DatabaseSeeder extends Seeder
 
          Transaksi::create([
             'user_id' => 1,
-            'total_harga'=> 80000,
+            'subtotal' => 80000,
+            'total_harga'=> 85000,
             'qty' => 2,
             'status' => 'proses laundry',
             'pembayaran'=>'qris',
             'status_pembayaran'=>'lunas',
-            'courier_id' => 7
+            'courier_id' => 7,
+            'ongkir' => 5000
          ]);
          TransaksiLayanan::create([
             'transaksi_id' => 4,
@@ -210,12 +219,14 @@ class DatabaseSeeder extends Seeder
 
          Transaksi::create([
             'user_id' => 1,
-            'total_harga'=> 80000,
+            'subtotal' => 80000,
+            'total_harga'=> 84000,
             'qty' => 2,
             'status' => 'selesai',
             'pembayaran'=>'qris',
             'status_pembayaran'=>'lunas',
-            'courier_id' => 6
+            'courier_id' => 6,
+            'ongkir' => 4000
          ]);
          TransaksiLayanan::create([
             'transaksi_id' => 5,
@@ -233,7 +244,10 @@ class DatabaseSeeder extends Seeder
          ]);
 
 
-
+         CompanyProfile::create([
+            'nama' => 'QuickWash',
+            'address' => '-6.934967,106.925719',
+        ]);
 
     }
 }

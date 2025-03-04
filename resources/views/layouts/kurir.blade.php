@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,10 @@
     <link href="../../../css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../bootstrap-icons-1.8.1/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <style>
         :root {
             --primary-color: #ffffff;
@@ -15,8 +20,8 @@
         }
 
         html {
-        overflow-x: hidden;
-    }
+            overflow-x: hidden;
+        }
 
         body {
             background-color: #f8f9fa;
@@ -25,7 +30,7 @@
         .sidebar {
             background: var(--primary-color);
             min-height: 100vh;
-            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
             position: fixed;
             width: 280px;
         }
@@ -34,16 +39,20 @@
             margin-left: 280px;
             padding: 30px;
             min-height: 100vh;
-            width: calc(100% - 280px); /* Tambahkan ini */
-            box-sizing: border-box; /* Tambahkan ini */
+            width: calc(100% - 280px);
+            /* Tambahkan ini */
+            box-sizing: border-box;
+            /* Tambahkan ini */
         }
+
         .fixed-bottom {
-        width: calc(100% - 280px);
-        left: 280px;
-        right: 0;
-        padding-right: 30px; /* Sesuaikan dengan padding main content */
-        box-sizing: border-box;
-    }
+            width: calc(100% - 280px);
+            left: 280px;
+            right: 0;
+            padding-right: 30px;
+            /* Sesuaikan dengan padding main content */
+            box-sizing: border-box;
+        }
 
         .nav-link {
             color: #495057;
@@ -69,7 +78,7 @@
             border: none;
             border-radius: 15px;
             transition: transform 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         .order-card:hover {
@@ -101,8 +110,17 @@
             align-items: center;
             justify-content: center;
         }
+        table th {
+            background-color: var(--secondary-color) !important;
+            color: var(--accent-color);
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
     </style>
 </head>
+
 <body>
     <div class="container-fluid p-0">
         <!-- Sidebar -->
@@ -115,7 +133,7 @@
             </div>
 
             <nav class="nav flex-column">
-                <a class="nav-link" href="{{route('kurir')}}">
+                <a class="nav-link" href="{{ route('kurir') }}">
                     <i class="bi bi-house-door me-3"></i> Beranda
                 </a>
                 <hr>
@@ -136,8 +154,8 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
 
-    <script>
-        new DataTable('#dataTables');
-    </script>
+    @stack('scripts')
+
 </body>
+
 </html>

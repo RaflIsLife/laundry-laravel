@@ -59,8 +59,9 @@
 
                             <div class="mb-4">
                                 <label class="form-label">Alamat</label>
-                                <input type="text" name="address" class="form-control"
-                                    value="{{ Auth::user()->address }}">
+                                <div id="map" class="" style="height: 400px"></div>
+                                <input type="hidden" id="latitude" name="latitude" value="{{ explode(',', Auth::user()->address)[0] }}">
+                                <input type="hidden" id="longitude" name="longitude" value="{{ explode(',', Auth::user()->address)[1] }}">
 
                             </div>
 
@@ -105,14 +106,39 @@
         }
     </style>
 
-    {{-- <script>
-$(document).ready(function() {
-    // Update phone code selection based on existing value
-    const phoneNumber = "{{ Auth::user()->phone }}";
-    if(phoneNumber) {
-        const phoneCode = phoneNumber.split(' ')[0];
-        $('select[name="phone_code"]').val(phoneCode);
-    }
-});
-</script> --}}
+    <script>
+
+
+        var lat = {{ explode(',', Auth::user()->address)[0] }};
+        var lng = {{ explode(',', Auth::user()->address)[1] }};
+
+        var map = L.map('map').setView([lat, lng], 17); // Set lokasi awal dari database
+
+        var Stadia_OSMBright = L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.{ext}', {
+            minZoom: 0,
+            maxZoom: 20,
+            attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            ext: 'png'
+        }).addTo(map);
+
+        var marker = L.marker([lat, lng], { draggable: true }).addTo(map)
+
+        // Saat user drag marker, update koordinat di input
+        marker.on('dragend', function(e) {
+            var position = marker.getLatLng();
+            document.getElementById('latitude').value = position.lat;
+            document.getElementById('longitude').value = position.lng;
+        });
+
+        // Saat user klik di peta, pindahkan marker
+        map.on('click', function(e) {
+            var newLat = e.latlng.lat;
+            var newLng = e.latlng.lng;
+
+            marker.setLatLng([newLat, newLng])
+
+            document.getElementById('latitude').value = newLat;
+            document.getElementById('longitude').value = newLng;
+        });
+    </script>
 @endsection
