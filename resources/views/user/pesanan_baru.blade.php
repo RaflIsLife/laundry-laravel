@@ -117,7 +117,7 @@
             var requestOptions = {
                 method: 'GET',
             };
-            const myAPIKey = env('GEOAPIFY_API_KEY');
+            const myAPIKey = '{{ env('GEOAPIFY_API_KEY') }}';
             const url =
                 `https://api.geoapify.com/v1/routing?waypoints=${addressCompany}|${addressUser}&mode=motorcycle&details=instruction_details&apiKey=${myAPIKey}`;
 

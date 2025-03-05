@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompanyProfile;
 use App\Models\Layanan;
 use App\Models\Transaksi;
 use App\Models\TransaksiLayanan;
@@ -14,7 +15,8 @@ class KasirController extends Controller
     public function kasir()
     {
         $layanan = Layanan::all();
-        return view('kasir/kasir', compact('layanan'));
+        $companyProfile = CompanyProfile::first();
+        return view('kasir/kasir', compact('layanan', 'companyProfile'));
     }
 
     public function postKasir(Request $request, User $user)
@@ -22,6 +24,10 @@ class KasirController extends Controller
         $data = $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_phone' => 'required|string|max:20',
+            'latitude' => 'sometimes',
+            'longitude' => 'sometimes',
+            'ongkir' => 'sometimes',
+            'pengantaran' => 'sometimes',
             'pembayaran' => 'required|in:qris,cod',
             'status_pembayaran' => 'required|in:lunas,proses',
             'services' => 'required|array|min:1',
@@ -40,6 +46,11 @@ class KasirController extends Controller
                 'phone' => $data['customer_phone'],
                 'role' => 'customer',
             ]);
+            if ($request->has('pengantaran')) {
+                $user->update([
+                    'address' => $request->latitude . ',' . $request->longitude,
+                ]);
+            }
         }
         $totalHarga = 0;
         foreach ($data['services'] as $service) {
@@ -53,13 +64,23 @@ class KasirController extends Controller
         // Buat transaksi
         $transaksi = Transaksi::create([
             'user_id' => $user->id,
+            'subtotal' => $totalHarga,
+            'ongkir' => 0,
             'total_harga' => $totalHarga,
             'qty' => count($data['services']),
             'status' => 'antrian laundry',
             'pembayaran' => $data['pembayaran'],
             'status_pembayaran' => $data['status_pembayaran'],
             'cara_pemesanan' => 'offline',
+            'pengantaran' => 'tidak',
         ]);
+        if ($request->has('pengantaran')) {
+            $transaksi->update([
+                'ongkir' => $data['ongkir'],
+                'total_harga' => ($totalHarga + $data['ongkir']),
+                'pengantaran' => 'ya',
+            ]);
+        }
 
         // Simpan layanan
         foreach ($data['services'] as $service) {
@@ -99,7 +120,17 @@ class KasirController extends Controller
     {
         $request->validate(['status' => 'required']);
 
-        $transaksi->update(['status' => $request->status]);
+        $updateData = ['status' => $request->status];
+
+        // Jika status diubah ke 'menunggu pengantaran', set courier_id ke null
+        if ($request->status == 'menunggu pengantaran') {
+            $updateData['courier_id'] = null;
+        }
+
+        $transaksi->update($updateData);
+
+        $userController = new UserController();
+        $userController->assignPendingOrders();
         return back()->with('status', 'Status transaksi diperbarui');
     }
 }

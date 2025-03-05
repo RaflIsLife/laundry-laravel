@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Http\Controllers\UserController;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -17,6 +18,9 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('reset:daily-orders')->dailyAt('00:00');
+        $schedule->call(function () {
+            app()->make(UserController::class)->assignPendingOrders();
+        })->everyMinute();
     }
 
     /**

@@ -21,7 +21,7 @@ Route::post("/postLogin", 'UserController@postLogin')->name('postLogin');
 Route::post("/postRegister", 'UserController@postRegister')->name('postRegister');
 
 Route::middleware('auth')->group(function () {
-    Route::middleware('check')->group(function () {
+    Route::middleware('check:admin')->group(function () {
         Route::get('/admin', 'AdminController@admin')->name('admin.home');
         Route::get('/admin/akun', 'AdminController@akun')->name('admin.akun');
         Route::delete('/admin/akun/delete/{id}', 'AdminController@akunDestroy')->name('admin.akun.delete');
@@ -38,29 +38,36 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/detailPesanan/{transaksi}', 'AdminController@detailPesanan')->name('admin.detailPesanan');
         Route::get('/admin/detailHistory/{transaksi}', 'AdminController@detailHistory')->name('admin.detailHistory');
     });
-    Route::post('/logout', 'UserController@logout')->name('logout');
-    Route::get('/kurir', 'KurirController@home')->name('kurir');
-    Route::post('/kurir/mark-paid/{transaksi}', 'KurirController@markPaid')->name('kurir.mark-paid');
-    Route::post('/kurir/complete-order/{transaksi}', 'KurirController@completeOrder')->name('kurir.complete-order');
-    Route::get('/kurir/detail/{transaksi}', 'KurirController@detail')->name('kurir.detail');
 
-    Route::get('/kasir', 'KasirController@kasir')->name('kasir');
-    Route::post('/postKasir', 'KasirController@postKasir')->name('postKasir');
-    Route::get('/kasir/transaksi', 'KasirController@transaksi')->name('kasir.transaksi');
-    Route::post('/kasir/transaksi/{transaksi}/status', 'KasirController@updateStatus')->name('kasir.transaksi.update-status');
-    Route::get('/kasir/history', 'KasirController@history')->name('kasir.history');
-    Route::get('/kasir/detailPesanan/{transaksi}', 'KasirController@detailPesanan')->name('kasir.detailPesanan');
+    Route::middleware('check:kurir')->group(function () {
+        Route::get('/kurir', 'KurirController@home')->name('kurir');
+        Route::post('/kurir/mark-paid/{transaksi}', 'KurirController@markPaid')->name('kurir.mark-paid');
+        Route::post('/kurir/complete-order/{transaksi}', 'KurirController@completeOrder')->name('kurir.complete-order');
+        Route::get('/kurir/detail/{transaksi}', 'KurirController@detail')->name('kurir.detail');
+    });
+    Route::middleware('check:kasir')->group(function () {
+        Route::get('/kasir', 'KasirController@kasir')->name('kasir');
+        Route::post('/postKasir', 'KasirController@postKasir')->name('postKasir');
+        Route::get('/kasir/transaksi', 'KasirController@transaksi')->name('kasir.transaksi');
+        Route::post('/kasir/transaksi/{transaksi}/status', 'KasirController@updateStatus')->name('kasir.transaksi.update-status');
+        Route::get('/kasir/history', 'KasirController@history')->name('kasir.history');
+        Route::get('/kasir/detailPesanan/{transaksi}', 'KasirController@detailPesanan')->name('kasir.detailPesanan');
+    });
 
-    Route::middleware(['auth'])->group(function () {
+    Route::middleware('check:owner')->group(function () {
         Route::get('/owner', 'OwnerController@home')->name('owner');
     });
 
-    Route::get('/user', 'UserController@user')->name('user');
-    Route::get('/user/detailPesanan/{transaksi}', 'UserController@detailPesanan')->name('detailPesanan');
-    Route::get('/user/detailRiwayat/{transaksi}', 'UserController@detailRiwayat')->name('detailRiwayat');
-    Route::get('/user/new', 'UserController@pesananBaru')->name('pesananBaru');
-    Route::post('/postPesanan', 'UserController@postPesanan')->name('pesananBaru.post');
-    Route::get('/user/history', 'UserController@history')->name('history');
-    Route::get('/user/profile', 'UserController@profile')->name('profile');
-    Route::post('/user/postProfile', 'UserController@profileUpdate')->name('profile.update');
+    Route::middleware('check:customer')->group(function () {
+        Route::get('/user', 'UserController@user')->name('user');
+        Route::get('/user/detailPesanan/{transaksi}', 'UserController@detailPesanan')->name('detailPesanan');
+        Route::get('/user/detailRiwayat/{transaksi}', 'UserController@detailRiwayat')->name('detailRiwayat');
+        Route::get('/user/new', 'UserController@pesananBaru')->name('pesananBaru');
+        Route::post('/postPesanan', 'UserController@postPesanan')->name('pesananBaru.post');
+        Route::get('/user/history', 'UserController@history')->name('history');
+        Route::get('/user/profile', 'UserController@profile')->name('profile');
+        Route::post('/user/postProfile', 'UserController@profileUpdate')->name('profile.update');
+    });
+
+    Route::post('/logout', 'UserController@logout')->name('logout');
 });

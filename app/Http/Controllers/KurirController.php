@@ -45,6 +45,7 @@ class KurirController extends Controller
         }
 
         $transaksi->status = $nextStatusMap[$transaksi->status];
+        $transaksi->courier_id = null;
         $transaksi->save();
 
         $courier = auth()->user();

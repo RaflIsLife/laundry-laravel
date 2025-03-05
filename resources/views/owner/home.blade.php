@@ -74,6 +74,8 @@
         </div>
     </div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Data untuk grafik pemasukan bulanan
         var pemasukanData = @json($grafikPemasukan); // Pastikan ini adalah array data yang diterima dari controller

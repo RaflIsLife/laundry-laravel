@@ -8,6 +8,11 @@
     <link href="../../../css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../bootstrap-icons-1.8.1/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
     <style>
         .order-status {
             font-size: 0.8rem;
@@ -94,6 +99,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .hidden {
+            visibility: hidden;
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            transition: opacity 0.3s ease, height 0.3s ease;
+        }
+
+        .visible {
+            visibility: visible;
+            opacity: 1;
+            height: auto;
         }
     </style>
 </head>

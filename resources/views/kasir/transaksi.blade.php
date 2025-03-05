@@ -27,10 +27,11 @@
                         </thead>
                         <tbody>
                             @foreach ($transaksi as $item)
-                                <tr>
+                                <tr valign="middle">
                                     <td>{{ $item->id }}</td>
                                     <td>{{ $item->user->name }}</td>
-                                    <td>{{ $item->user->phone }}</td>
+                                    <td><a href="http://wa.me/62{{ ltrim($item->user->phone, 0) }}" target="_blank"
+                                            rel="noopener noreferrer"> {{ $item->user->phone }} </a></td>
                                     <td>{{ $item->created_at }}</td>
                                     <td>Rp {{ number_format($item->total_harga) }}</td>
                                     <td>
@@ -43,31 +44,35 @@
                                         <form action="{{ route('kasir.transaksi.update-status', $item) }}" method="POST">
                                             @csrf
                                             <select name="status" class="form-select" onchange="this.form.submit()">
-                                                <option value="menunggu pengambilan"
-                                                    {{ $item->status == 'menunggu pengambilan' ? 'selected' : '' }}>Menunggu
-                                                    Pengambilan
-                                                </option>
+                                                @if ($item->cara_pemesanan == 'online')
+                                                    <option value="menunggu pengambilan"
+                                                        {{ $item->status == 'menunggu pengambilan' ? 'selected' : '' }}>
+                                                        Menunggu
+                                                        Pengambilan
+                                                    </option>
+                                                @endif
 
-                                                <option value="pengambilan"
-                                                    {{ $item->status == 'pengambilan' ? 'selected' : '' }}>Pengambilan
-                                                </option>
 
                                                 <option value="antrian laundry"
                                                     {{ $item->status == 'antrian laundry' ? 'selected' : '' }}>Antrian
+                                                    Laundry
                                                 </option>
 
                                                 <option value="proses laundry"
                                                     {{ $item->status == 'proses laundry' ? 'selected' : '' }}>Proses
+                                                    Laundry
                                                 </option>
 
-                                                <option value="menunggu pengantaran"
-                                                    {{ $item->status == 'menunggu pengantaran' ? 'selected' : '' }}>
-                                                    Menunggu Pengantaran
-                                                </option>
-
-                                                <option value="pengantaran"
-                                                    {{ $item->status == 'pengantaran' ? 'selected' : '' }}>Pengantaran
-                                                </option>
+                                                @if ($item->pengantaran == 'ya')
+                                                    <option value="menunggu pengantaran"
+                                                        {{ $item->status == 'menunggu pengantaran' ? 'selected' : '' }}>
+                                                        Menunggu Pengantaran
+                                                    </option>
+                                                @elseif ($item->pengantaran == 'tidak' && $item->cara_pemesanan == 'offline')
+                                                    <option value="selesai-menungguUserAmbil" {{ $item->status == 'menunggu user mengambil' ? 'selected' : '' }}>
+                                                        Menunggu User Mengambil
+                                                    </option>
+                                                @endif
 
                                                 <option value="selesai" {{ $item->status == 'selesai' ? 'selected' : '' }}>
                                                     Selesai

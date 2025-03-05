@@ -15,7 +15,7 @@
                     <table class="table table-hover" id="dataTables">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>ID</th>
                                 <th>Nama Pelanggan</th>
                                 <th>Nomor Whatsapp</th>
                                 <th>Tanggal Selesai</th>
@@ -27,10 +27,11 @@
                         </thead>
                         <tbody>
                             @foreach ($transaksi as $item)
-                                <tr>
+                                <tr valign="middle">
                                     <td>{{ $item->id }}</td>
                                     <td>{{ $item->user->name }}</td>
-                                    <td>{{ $item->user->phone }}</td>
+                                    <td><a href="http://wa.me/62{{ ltrim($item->user->phone, 0) }}" target="_blank"
+                                            rel="noopener noreferrer"> {{ $item->user->phone }} </a></td>
                                     <td>{{ $item->updated_at }}</td>
                                     <td>Rp {{ number_format($item->total_harga) }}</td>
                                     <td>

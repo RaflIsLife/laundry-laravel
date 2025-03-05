@@ -15,24 +15,12 @@ class CheckRoleUser
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, ...$roles)
     {
-        if (Auth::check() && Auth::user()->role != 'admin') {
-            switch (Auth::user()->role) {
-                case 'customer':
-                    return redirect()->route('user')->with('status', 'Anda bukan admin!!');
-
-                case 'kasir':
-                    return redirect()->route('kasir')->with('status', 'Anda bukan admin!!');
-
-                case 'kurir': //todo: saat menambah halaman kurir, ubah ini
-                    return redirect()->route('home')->with('status', 'Anda bukan admin!!');
-
-
-                default:
-                    return redirect()->route('home');
-            }
+        if (!Auth::check() || !in_array(Auth::user()->role, $roles)) {
+            return redirect()->route('home')->with('status', 'Anda tidak memiliki akses ke halaman ini!');
         }
+
         return $next($request);
     }
 }

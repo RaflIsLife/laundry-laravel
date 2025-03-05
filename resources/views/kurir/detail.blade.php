@@ -21,7 +21,7 @@
                             <div class="mb-3">
                                 <h4 class="fw-bold">{{ $transaksi->user->name }}</h4>
                                 <p class="mb-1">{{ $transaksi->user->address }}</p>
-                                <a class="text-muted" href="http://wa.me/62{{ ltrim($transaksi->user->phone, 0) }}">
+                                <a class="text-muted" href="http://wa.me/62{{ ltrim($transaksi->user->phone, 0) }}" target="_blank" rel="noopener noreferrer">
                                     <small class="d-flex align-items-center">
                                         <i class="bi bi-whatsapp pr-2"></i>{{ $transaksi->user->phone }}
                                     </small>
@@ -202,7 +202,7 @@
         var requestOptions = {
             method: 'GET',
         };
-        const myAPIKey = env('GEOAPIFY_API_KEY');
+        const myAPIKey = '{{ env('GEOAPIFY_API_KEY') }}';
         const url =
             `https://api.geoapify.com/v1/routing?waypoints=${addressCompany}|${addressUser}&mode=motorcycle&details=instruction_details&apiKey=${myAPIKey}`;
 

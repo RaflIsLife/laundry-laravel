@@ -34,6 +34,41 @@
                             </div>
                         </div>
 
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="tambah-alamat" name="pengantaran"
+                                        value="ya">
+                                    <label class="form-check-label" for="tambah-alamat">
+                                        Tambahkan Alamat Pengambilan
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="alamat-container" class="hidden">
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Cari Alamat</label>
+                                        <input type="text" class="form-control" id="search-alamat"
+                                            name="alamat_pengambilan">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <div id="map"
+                                        style="height: 300px; background-color: #e9ecef; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <input type="hidden" id="latitude" name="latitude">
+                            <input type="hidden" id="longitude" name="longitude">
+                        </div>
                         <div id="daftar-pesanan">
                             <div class="item-pesanan mb-4">
                                 <div class="row g-3">
@@ -83,6 +118,11 @@
 
                         <div class="row mt-3">
                             <div class="col text-end">
+                                <input type="hidden" id="ongkir" name="ongkir" value="0">
+                                <div id="hargaView" class="hidden">
+                                    <h5>Total Harga: <span id="total-hargaView">0</span></h5>
+                                    <h5>Ongkir: <span id="ongkirView">0</span></h5>
+                                </div>
                                 <h5>Total Keseluruhan: <span id="total-keseluruhan">0</span></h5>
                             </div>
                         </div>
@@ -133,6 +173,84 @@
                 return 'Rp ' + angka.toLocaleString('id-ID');
             }
 
+            $('#tambah-alamat').change(function() {
+                const container = $('#alamat-container');
+                const viewHarga = $('#hargaView');
+                if ($(this).is(':checked')) {
+                    container.removeClass('hidden').addClass('visible');
+                    viewHarga.removeClass('hidden').addClass('visible');
+
+                    // Inisialisasi ulang map setelah container terlihat
+                    setTimeout(() => {
+                        map.invalidateSize();
+                    }, 300); // Sesuaikan timeout dengan durasi transisi CSS
+                } else {
+                    container.removeClass('visible').addClass('hidden');
+                    viewHarga.removeClass('visible').addClass('hidden');
+                }
+            });
+
+            var map = L.map('map').setView([-6.934930, 106.925816], 17);
+
+            var Stadia_OSMBright = L.tileLayer(
+                'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.{ext}', {
+                    minZoom: 0,
+                    maxZoom: 20,
+                    attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    ext: 'png'
+                }).addTo(map);
+
+            var markers = [];
+            var ongkirInt = 0;
+            map.on('click', function(e) {
+                var lat = e.latlng.lat;
+                var lng = e.latlng.lng;
+                const addressUser = `${lat},${lng}`;
+                const addressCompany = '{{ $companyProfile->address }}';
+
+                markers.forEach(marker => map.removeLayer(marker));
+                markers = [];
+
+                var marker = L.marker([lat, lng]).addTo(map);
+                markers.push(marker);
+
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+                var jarak = 0;
+
+                var requestOptions = {
+                    method: 'GET',
+                };
+                const myAPIKey = '{{ env('GEOAPIFY_API_KEY') }}';
+                const url =
+                    `https://api.geoapify.com/v1/routing?waypoints=${addressCompany}|${addressUser}&mode=motorcycle&details=instruction_details&apiKey=${myAPIKey}`;
+
+                async function getDistance() {
+                    try {
+                        const response = await fetch(url);
+                        const result = await response.json();
+                        const jarak = result.features[0].properties.distance;
+                        return jarak;
+                    } catch (error) {
+                        console.log('error', error);
+                    }
+                }
+
+                getDistance().then(jarak => {
+                    // 100 meter = 200 perak
+                    // ceil = membulatkan desimalke yang terdekat
+                    var ongkir = Math.ceil(jarak / 100) * 200;
+                    ongkirInt = ongkir;
+
+                    $('#ongkirView').text(formatRupiah(parseInt(ongkirInt)));
+                    document.getElementById('ongkir').value = parseInt(ongkir);
+
+                });
+            });
+
+
+
+
             function updatePrices() {
                 let total = 0;
                 $('.item-pesanan').each(function() {
@@ -154,8 +272,8 @@
                     $(this).find('.akumulasi-harga').val(formatRupiah(subtotal));
                     total += subtotal;
                 });
-
-                $('#total-keseluruhan').text(formatRupiah(total));
+                $('#total-hargaView').text(formatRupiah(total));
+                $('#total-keseluruhan').text(formatRupiah(total + ongkirInt));
             }
 
             $('#tambah-item').click(function() {

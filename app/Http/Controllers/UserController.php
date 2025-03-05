@@ -60,8 +60,8 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
             'phone' => 'required|numeric|unique:users,phone',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'latitude' => 'required',
+            'longitude' => 'required',
         ], [
             'email.unique' => 'Email sudah terpakai, mohon ganti.',
             'phone.unique' => 'Nomor HP sudah terpakai, mohon ganti.'
@@ -71,7 +71,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'phone' => $request->phone_code . $request->phone,
+            'phone' => $request->phone,
             'address' => $request->latitude . ',' . $request->longitude,
         ]);
 
@@ -109,6 +109,8 @@ class UserController extends Controller
     {
         // Ambil transaksi yang belum memiliki kurir (diurutkan dari yang paling lama)
         $pendingOrders = Transaksi::whereNull('courier_id')
+            ->where('pengantaran', 'ya')
+            ->whereIn('status', ['menunggu pengambilan', 'menunggu pengantaran']) // Gunakan whereIn
             ->orderBy('created_at', 'asc')
             ->get();
 
