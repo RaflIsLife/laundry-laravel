@@ -1,7 +1,6 @@
 @extends('layouts.kasir')
 
 @section('content')
-    <!-- Main Content -->
     <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -14,38 +13,32 @@
                 </h2>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a
-                                href=" @if ($transaksi->status == 'selesai') {{ route('kasir.history') }}
-                @else
-                {{ route('kasir.transaksi') }} @endif">
-                @if ($transaksi->status == 'selesai')
-                History
-            @else
-                Pesanan
-            @endif
-            </a>
+                        <li class="breadcrumb-item">
+                            <a
+                                href="
+                                @if ($transaksi->status == 'selesai') {{ route('kasir.history') }} @else {{ route('kasir.transaksi') }} @endif">
+                                @if ($transaksi->status == 'selesai')
+                                    History
+                                @else
+                                    Pesanan
+                                @endif
+                            </a>
                         </li>
                         <li class="breadcrumb-item active">LN-{{ $transaksi->id }}</li>
                     </ol>
                 </nav>
             </div>
             <a href="
-            @if ($transaksi->status == 'selesai') {{ route('kasir.history') }}
-                @else
-                {{ route('kasir.transaksi') }} @endif
-            "
+            @if ($transaksi->status == 'selesai') {{ route('kasir.history') }} @else {{ route('kasir.transaksi') }} @endif"
                 class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-2"></i>Kembali
             </a>
         </div>
 
-        <!-- Order Summary -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">
-
-
                         <dl class="row mb-0">
                             <dt class="col-sm-4">Nama Pemesan</dt>
                             <dd class="col-sm-8 fw-bold text-danger">{{ $transaksi->user->name }}</dd>
@@ -75,27 +68,23 @@
 
                             <dt class="col-sm-4">Total Keseluruhan</dt>
                             <dd class="col-sm-8 fw-bold">
-                            <span class="badge bg-primary fs-5" style="height: 40px; width: 140px;">    Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}
-                            </span>
+                                <span class="badge bg-primary fs-5" style="height: 40px; width: 140px;"> Rp
+                                    {{ number_format($transaksi->total_harga, 0, ',', '.') }}
+                                </span>
                             </dd>
-
                         </dl>
                     </div>
 
                     <div class="col-md-4">
                         <dl class="row mb-0">
-
                             <dt class="col-sm-4">Metode Pembayaran</dt>
                             <dd class="col-sm-8">
-
                                 @if ($transaksi->pembayaran == 'qris')
                                     <i class="bi bi-qr-code me-2"></i>QRIS
                                 @else
                                     <i class="bi bi-cash-coin me-2"></i>COD
                                 @endif
-
                             </dd>
-
                             <dt class="col-sm-4">Status Pembayaran</dt>
                             <dd class="col-sm-8">
                                 @if ($transaksi->status_pembayaran == 'lunas')
@@ -114,11 +103,9 @@
             </div>
         </div>
 
-        <!-- Order Items -->
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <h5 class="fw-bold mb-4">Detail Layanan</h5>
-
                 <div class="table-responsive">
                     <table class="table" id="dataTables">
                         <thead class="table-light">
@@ -156,15 +143,6 @@
                         </tfoot>
                     </table>
                 </div>
-
-                {{-- @if ($order->payment_method === 'qris')
-                <div class="mt-4 border-top pt-4">
-                    <h6 class="fw-bold mb-3">Bukti Pembayaran</h6>
-                    <img src="{{ asset('storage/'.$order->payment_proof) }}"
-                         alt="QR Code"
-                         style="max-width: 200px; border-radius: 8px">
-                </div>
-                @endif --}}
             </div>
         </div>
     </div>

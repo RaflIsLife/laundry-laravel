@@ -1,8 +1,6 @@
 @extends('layouts.admin')
 
 @section('content')
-
-    <!-- Main Content -->
     <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -19,7 +17,6 @@
             </a>
         </div>
 
-        <!-- Order Summary -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
                 <div class="row">
@@ -53,8 +50,9 @@
 
                             <dt class="col-sm-4">Total Keseluruhan</dt>
                             <dd class="col-sm-8 fw-bold">
-                            <span class="badge bg-primary fs-5" style="height: 40px; width: 140px;">    Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}
-                            </span>
+                                <span class="badge bg-primary fs-5" style="height: 40px; width: 140px;"> Rp
+                                    {{ number_format($transaksi->total_harga, 0, ',', '.') }}
+                                </span>
                             </dd>
 
                         </dl>
@@ -66,29 +64,19 @@
                             <dd class="col-sm-8">
 
 
-                                    @if ($transaksi->pembayaran == 'qris')
+                                @if ($transaksi->pembayaran == 'qris')
                                     <i class="bi bi-qr-code me-2"></i>QRIS
                                 @else
                                     <i class="bi bi-cash-coin me-2"></i>COD
                                 @endif
 
                             </dd>
-
-                            {{-- @if($order->payment_method === 'qris')
-                            <dt class="col-sm-4">Status Pembayaran</dt>
-                            <dd class="col-sm-8">
-                                <span class="badge bg-success">
-                                    <i class="bi bi-check-circle me-2"></i>Lunas
-                                </span>
-                            </dd>
-                            @endif --}}
                         </dl>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Order Items -->
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <h5 class="fw-bold mb-4">Detail Layanan</h5>
@@ -112,10 +100,9 @@
                                     </td>
                                     <td>
                                         @if ($item->type_qty == 'pcs')
-
-                                        Rp {{ number_format($item->layanan->harga_pcs, 0, ',', '.') }}
-                                       @else
-                                        Rp {{ number_format($item->layanan->harga_kg, 0, ',', '.') }}
+                                            Rp {{ number_format($item->layanan->harga_pcs, 0, ',', '.') }}
+                                        @else
+                                            Rp {{ number_format($item->layanan->harga_kg, 0, ',', '.') }}
                                         @endif
                                     </td>
                                     <td>Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
@@ -130,51 +117,41 @@
                         </tfoot>
                     </table>
                 </div>
-
-                {{-- @if($order->payment_method === 'qris')
-                <div class="mt-4 border-top pt-4">
-                    <h6 class="fw-bold mb-3">Bukti Pembayaran</h6>
-                    <img src="{{ asset('storage/'.$order->payment_proof) }}"
-                         alt="QR Code"
-                         style="max-width: 200px; border-radius: 8px">
-                </div>
-                @endif --}}
             </div>
         </div>
     </div>
 
+    <style>
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+        }
 
-<style>
-    .status-badge {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        display: inline-flex;
-        align-items: center;
-    }
+        .badge-proses {
+            background: #e3f2fd;
+            color: #2196f3;
+        }
 
-    .badge-proses {
-        background: #e3f2fd;
-        color: #2196f3;
-    }
+        .badge-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
 
-    .badge-completed {
-        background: #e8f5e9;
-        color: #2e7d32;
-    }
+        .badge-canceled {
+            background: #ffebee;
+            color: #c62828;
+        }
 
-    .badge-canceled {
-        background: #ffebee;
-        color: #c62828;
-    }
+        table th {
+            background-color: var(--secondary-color) !important;
+            color: var(--accent-color);
+        }
 
-    table th {
-        background-color: var(--secondary-color) !important;
-        color: var(--accent-color);
-    }
-
-    .table tbody tr:hover {
-        background-color: #f8f9fa;
-    }
-</style>
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
 @endsection

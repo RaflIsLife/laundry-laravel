@@ -34,15 +34,15 @@ class UserController extends Controller
         if (Auth::attempt($cek)) {
             $user = Auth::user();
             if ($user->role == 'customer') {
-                return redirect()->route('user')->with('status', 'Selmat datang :' . $user->name);
+                return redirect()->route('user')->with('status', 'Selamat datang :' . $user->name);
             } else if ($user->role == 'admin') {
-                return redirect()->route('admin.home')->with('status', 'Selmat datang :' . $user->name);
+                return redirect()->route('admin.home')->with('status', 'Selamat datang :' . $user->name);
             } else if ($user->role == 'kasir') {
-                return redirect()->route('kasir')->with('status', 'Selmat datang :' . $user->name);
+                return redirect()->route('kasir')->with('status', 'Selamat datang :' . $user->name);
             } else if ($user->role == 'kurir') {
-                return redirect()->route('kurir')->with('status', 'Selmat datang :' . $user->name);
+                return redirect()->route('kurir')->with('status', 'Selamat datang :' . $user->name);
             } else if ($user->role == 'owner') {
-                return redirect()->route('owner')->with('status', 'Selmat datang :' . $user->name);
+                return redirect()->route('owner')->with('status', 'Selamat datang :' . $user->name);
             }
         }
         return back()->with('status', 'Email/Password salah');
@@ -106,115 +106,112 @@ class UserController extends Controller
     }
 
     public function assignPendingOrders()
-{
-    // Ambil transaksi yang belum memiliki kurir (diurutkan dari yang paling lama)
-    $pendingOrders = Transaksi::whereNull('courier_id')
-        ->orderBy('created_at', 'asc')
-        ->get();
+    {
+        // Ambil transaksi yang belum memiliki kurir (diurutkan dari yang paling lama)
+        $pendingOrders = Transaksi::whereNull('courier_id')
+            ->orderBy('created_at', 'asc')
+            ->get();
 
-    foreach ($pendingOrders as $order) {
-        // Cari kurir tersedia dengan pesanan selesai paling sedikit
-        $availableCourier = User::where('role', 'kurir')
-            ->where('status', 'available')
-            ->orderBy('daily_completed_orders', 'asc')
-            ->first();
+        foreach ($pendingOrders as $order) {
+            // Cari kurir tersedia dengan pesanan selesai paling sedikit
+            $availableCourier = User::where('role', 'kurir')
+                ->where('status', 'available')
+                ->orderBy('daily_completed_orders', 'asc')
+                ->first();
 
-        if ($availableCourier) {
-            // Assign ke kurir
-            $order->courier_id = $availableCourier->id;
-            if ($order->status == 'menunggu pengambilan') {
-                $order->status = 'pengambilan';
-            } else if ($order->status == 'menunggu pengantaran') {
-                $order->status = 'pengantaran';
+            if ($availableCourier) {
+                // Assign ke kurir
+                $order->courier_id = $availableCourier->id;
+                if ($order->status == 'menunggu pengambilan') {
+                    $order->status = 'pengambilan';
+                } else if ($order->status == 'menunggu pengantaran') {
+                    $order->status = 'pengantaran';
+                }
+                $order->save();
+
+                // Update status kurir
+                $availableCourier->status = 'on_delivery';
+                $availableCourier->save();
+
+                break; // Hanya assign satu pesanan per eksekusi
             }
-            $order->save();
-
-            // Update status kurir
-            $availableCourier->status = 'on_delivery';
-            $availableCourier->save();
-
-            break; // Hanya assign satu pesanan per eksekusi
         }
     }
-}
 
     public function postPesanan(Request $request)
-{
-    $data = $request->validate([
-        'payment_method' => 'required|string',
-        'services' => 'required|array',
-        'services.*.service_id' => 'required|exists:layanans,id',
-        'services.*.quantity' => 'required|numeric|min:0.1',
-        'services.*.unit' => 'required|string',
-        'ongkir' => 'required|int',
-    ]);
+    {
+        $data = $request->validate([
+            'payment_method' => 'required|string',
+            'services' => 'required|array',
+            'services.*.service_id' => 'required|exists:layanans,id',
+            'services.*.quantity' => 'required|numeric|min:0.1',
+            'services.*.unit' => 'required|string',
+            'ongkir' => 'required|int',
+        ]);
 
 
-    $totalHarga = 0;
-    $totalJumlah = 0;
-    $statusPembayaran = '';
+        $totalHarga = 0;
+        $totalJumlah = 0;
+        $statusPembayaran = '';
 
-    if ($data['payment_method'] == 'qris') {
-        $statusPembayaran = 'lunas';
-    } elseif ($data['payment_method'] == 'cod') {
-        $statusPembayaran = 'proses';
-    }
-
-    // Buat transaksi baru
-    $transaksi = Transaksi::create([
-        'user_id' => auth()->id(),
-        'total_harga' => 0,
-        'qty' => 0,
-        'subtotal' => 0,
-        'ongkir' => 0,
-        'status' => 'menunggu pengambilan',
-        'pembayaran' => $data['payment_method'],
-        'status_pembayaran' => $statusPembayaran,
-    ]);
-    // Loop setiap pesanan layanan
-    foreach ($data['services'] as $pesanan) {
-        $layanan = Layanan::find($pesanan['service_id']);
-
-        // Tentukan harga satuan sesuai unit
-        if ($pesanan['unit'] === 'pcs') {
-            $hargaSatuan = $layanan->harga_pcs;
-            $type = 'pcs';
-        } else {
-            $hargaSatuan = $layanan->harga_kg;
-            $type = 'kg';
+        if ($data['payment_method'] == 'qris') {
+            $statusPembayaran = 'lunas';
+        } elseif ($data['payment_method'] == 'cod') {
+            $statusPembayaran = 'proses';
         }
 
-        $jumlah = $pesanan['quantity'];
-        $harga = $hargaSatuan * $jumlah;
-
-        // Tambah ke total
-        $totalHarga += $harga;
-        $totalJumlah++;
-
-        // Simpan detail ke pivot table (transaksi_layanan)
-        $transaksi->layanan()->attach($layanan->id, [
-            'qty'   => $jumlah,
-            'type_qty'   => $type,
-            'harga' => $harga,
+        // Buat transaksi baru
+        $transaksi = Transaksi::create([
+            'user_id' => auth()->id(),
+            'total_harga' => 0,
+            'qty' => 0,
+            'subtotal' => 0,
+            'ongkir' => 0,
+            'status' => 'menunggu pengambilan',
+            'pembayaran' => $data['payment_method'],
+            'status_pembayaran' => $statusPembayaran,
         ]);
+        // Loop setiap pesanan layanan
+        foreach ($data['services'] as $pesanan) {
+            $layanan = Layanan::find($pesanan['service_id']);
+
+            // Tentukan harga satuan sesuai unit
+            if ($pesanan['unit'] === 'pcs') {
+                $hargaSatuan = $layanan->harga_pcs;
+                $type = 'pcs';
+            } else {
+                $hargaSatuan = $layanan->harga_kg;
+                $type = 'kg';
+            }
+
+            $jumlah = $pesanan['quantity'];
+            $harga = $hargaSatuan * $jumlah;
+
+            // Tambah ke total
+            $totalHarga += $harga;
+            $totalJumlah++;
+
+            // Simpan detail ke pivot table (transaksi_layanan)
+            $transaksi->layanan()->attach($layanan->id, [
+                'qty'   => $jumlah,
+                'type_qty'   => $type,
+                'harga' => $harga,
+            ]);
+        }
+        $subtotal = $totalHarga;
+        $totalHarga += $data['ongkir'];
+        // Update total di transaksi
+        $transaksi->update([
+            'subtotal'    => $subtotal,
+            'ongkir'      => $data['ongkir'],
+            'total_harga' => $totalHarga,
+            'qty'         => $totalJumlah,
+        ]);
+
+        $this->assignPendingOrders();
+
+        return redirect()->route('user')->with('success', 'Pesanan berhasil dibuat!');
     }
-    $subtotal = $totalHarga;
-    $totalHarga += $data['ongkir'];
-    // Update total di transaksi
-    $transaksi->update([
-        'subtotal'    => $subtotal,
-        'ongkir'      => $data['ongkir'],
-        'total_harga' => $totalHarga,
-        'qty'         => $totalJumlah,
-    ]);
-
-    $this->assignPendingOrders();
-
-    return redirect()->route('user')->with('success', 'Pesanan berhasil dibuat!');
-}
-
-
-
 
     public function history(Request $request)
     {

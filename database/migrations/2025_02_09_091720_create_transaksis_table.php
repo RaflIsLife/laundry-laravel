@@ -21,7 +21,7 @@ class CreateTransaksisTable extends Migration
             $table->integer('total_harga');
             $table->integer('subtotal');
             $table->integer('qty');
-            $table->enum('status', ['menunggu pengambilan', 'menunggu pengantaran', 'pengambilan','antrian laundry', 'proses laundry', 'pengantaran', 'selesai']);
+            $table->enum('status', ['menunggu pengambilan', 'menunggu pengantaran', 'pengambilan', 'antrian laundry', 'proses laundry', 'pengantaran', 'selesai']);
             $table->enum('pembayaran', ['qris', 'cod']);
             $table->enum('status_pembayaran', ['lunas', 'proses']);
             $table->enum('cara_pemesanan', ['offline', 'online'])->default('online');

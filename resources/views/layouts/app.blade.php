@@ -27,8 +27,6 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        }
-
         .display-3 {
             font-size: 4rem;
             line-height: 1.1;
@@ -54,7 +52,6 @@
         @yield('content')
     </main>
 
-    <!-- Bootstrap JS -->
     <script src="../js/bootstrap.bundle.min.js"></script>
 </body>
 

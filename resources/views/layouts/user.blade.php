@@ -98,15 +98,12 @@
 
 <body>
     <div class="container-fluid p-0">
-        <!-- Sidebar -->
         <div class="sidebar p-3">
             <div class="text-center mb-5">
                 <a href="{{ route('home') }}">
-
                     <h3 class="fw-bold text-primary">Quick<span class="text-secondary">Wash</span></h3>
                 </a>
             </div>
-
             <nav class="nav flex-column">
                 <a class="nav-link" href="{{ route('user') }}">
                     <i class="bi bi-basket me-3"></i> Pesanan
@@ -129,8 +126,6 @@
                 </form>
             </nav>
         </div>
-
-        <!-- Main Content -->
         @yield('content')
     </div>
 
@@ -141,7 +136,6 @@
 
     <script>
         new DataTable('#dataTables');
-
     </script>
 </body>
 

@@ -110,6 +110,7 @@
             align-items: center;
             justify-content: center;
         }
+
         table th {
             background-color: var(--secondary-color) !important;
             color: var(--accent-color);
@@ -123,11 +124,9 @@
 
 <body>
     <div class="container-fluid p-0">
-        <!-- Sidebar -->
         <div class="sidebar p-3">
             <div class="text-center mb-5">
                 <a href="{{ route('home') }}">
-
                     <h3 class="fw-bold text-primary">Quick<span class="text-secondary">Wash</span></h3>
                 </a>
             </div>
@@ -145,8 +144,6 @@
                 </form>
             </nav>
         </div>
-
-        <!-- Main Content -->
         @yield('content')
     </div>
 

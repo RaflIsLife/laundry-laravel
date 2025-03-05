@@ -1,5 +1,3 @@
-<!-- Main Content -->
-{{-- todo: use pagination --}}
 @extends('layouts.user')
 
 @section('content')
@@ -15,8 +13,6 @@
         </div>
 
         <h4 class="mb-4 fw-bold">Pesanan Aktif</h4>
-
-        <!-- Order List -->
         <div class="row g-4">
             @foreach ($transaksi as $item)
                 <div class="col-md-6">
@@ -56,7 +52,6 @@
             <div class="d-flex justify-content-center mt-4">
                 {{ $transaksi->links() }}
             </div>
-
         </div>
     </div>
 @endsection

@@ -5,7 +5,6 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Daftar Pesanan Berlangsung</h2>
         </div>
-
         <div class="card shadow-sm">
             <div class="card-body">
                 <div class="table-responsive">
@@ -37,12 +36,12 @@
                                     @case('cod')
                                         bg-secondary
                                         @break
-
                                 @endswitch
                                  ">{{ $item->pembayaran }}</span>
                                     </td>
                                     <td>
-                                        <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.detailPesanan', ['transaksi' => $item->id]) }}">
+                                        <a class="btn btn-sm btn-outline-primary"
+                                            href="{{ route('admin.detailPesanan', ['transaksi' => $item->id]) }}">
                                             <i class="bi bi-eye"></i>
                                             </button>
                                     </td>

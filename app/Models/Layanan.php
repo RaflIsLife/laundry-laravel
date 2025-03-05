@@ -14,11 +14,10 @@ class Layanan extends Model
         'harga_pcs'
     ];
 
-    Public function transaksi()
+    public function transaksi()
     {
-        Return $this->belongsToMany(Transaksi::class, 'transaksi_layanan')
-                    ->withPivot('qty', 'harga')
-                    ->withTimestamps();
+        return $this->belongsToMany(Transaksi::class, 'transaksi_layanan')
+            ->withPivot('qty', 'harga')
+            ->withTimestamps();
     }
-
 }

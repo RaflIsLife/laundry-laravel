@@ -17,22 +17,24 @@
                 <form action="{{ route('postAkunUpdate', ['id' => $user->id]) }}" method="POST" class="auth-form">
                     @csrf
                     @method('PUT')
-
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Nama Lengkap</label>
-                                <input type="text" name="name" class="form-control" value="{{ old('name', $user->name) }}" required>
+                                <input type="text" name="name" class="form-control"
+                                    value="{{ old('name', $user->name) }}" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" value="{{ old('email', $user->email) }}" required>
+                                <input type="email" name="email" class="form-control"
+                                    value="{{ old('email', $user->email) }}" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Nomor Telepon</label>
-                                <input type="tel" name="phone" class="form-control" value="{{ old('phone', $user->phone) }}" required>
+                                <input type="tel" name="phone" class="form-control"
+                                    value="{{ old('phone', $user->phone) }}" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Password</label>
@@ -47,7 +49,8 @@
                                     <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
                                     <option value="kasir" {{ $user->role == 'kasir' ? 'selected' : '' }}>Kasir</option>
                                     <option value="kurir" {{ $user->role == 'kurir' ? 'selected' : '' }}>Kurir</option>
-                                    <option value="customer" {{ $user->role == 'customer' ? 'selected' : '' }}>Customer</option>
+                                    <option value="customer" {{ $user->role == 'customer' ? 'selected' : '' }}>Customer
+                                    </option>
                                 </select>
                             </div>
                         </div>

@@ -47,19 +47,24 @@
                                                     {{ $item->status == 'menunggu pengambilan' ? 'selected' : '' }}>Menunggu
                                                     Pengambilan
                                                 </option>
+
                                                 <option value="pengambilan"
                                                     {{ $item->status == 'pengambilan' ? 'selected' : '' }}>Pengambilan
                                                 </option>
+
                                                 <option value="antrian laundry"
                                                     {{ $item->status == 'antrian laundry' ? 'selected' : '' }}>Antrian
                                                 </option>
+
                                                 <option value="proses laundry"
                                                     {{ $item->status == 'proses laundry' ? 'selected' : '' }}>Proses
                                                 </option>
+
                                                 <option value="menunggu pengantaran"
                                                     {{ $item->status == 'menunggu pengantaran' ? 'selected' : '' }}>
                                                     Menunggu Pengantaran
                                                 </option>
+
                                                 <option value="pengantaran"
                                                     {{ $item->status == 'pengantaran' ? 'selected' : '' }}>Pengantaran
                                                 </option>
@@ -70,9 +75,9 @@
                                             </select>
                                         </form>
                                     </td>
-
                                     <td>
-                                        <a href="{{ route('kasir.detailPesanan', ['transaksi' => $item->id]) }}" class="btn btn-sm btn-light">
+                                        <a href="{{ route('kasir.detailPesanan', ['transaksi' => $item->id]) }}"
+                                            class="btn btn-sm btn-light">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     </td>
@@ -83,6 +88,5 @@
                 </div>
             </div>
         </div>
-
     </div>
 @endsection

@@ -5,9 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Laundry') }}</title>
-    <!-- Bootstrap CSS -->
     <link href="../css/bootstrap.min.css" rel="stylesheet">
-    <!-- Link untuk stylesheets lainnya -->
     <link rel="stylesheet" href="../../../bootstrap-icons-1.8.1/bootstrap-icons.css">
 
     <style>
@@ -105,7 +103,6 @@
 
 <body>
     <div class="container-fluid p-0">
-        <!-- Sidebar for the Owner layout -->
         <div class="sidebar">
             <div class="text-center mb-5">
                 <a href="{{ route('home') }}">
@@ -135,8 +132,6 @@
         @yield('content')
     </div>
 
-
-    <!-- Bootstrap JS -->
     <script src="../js/bootstrap.bundle.min.js"></script>
 </body>
 

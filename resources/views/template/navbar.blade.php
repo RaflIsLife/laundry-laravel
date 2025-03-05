@@ -1,7 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container">
         <div class="navbar-brand">
-
             <a class="" href="{{ route('home') }}">
                 <h3 class="fw-bold text-primary">Quick<span class="text-secondary">Wash</span></h3>
             </a>
@@ -18,37 +17,32 @@
                     <a class="nav-link" href="{{ route('register') }}">Register</a>
                 </li>
                 @if (Auth::check())
-
-                @if(Auth::user()->role == 'kasir')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('kasir') }}">Kasir</a>
-                </li>
+                    @if (Auth::user()->role == 'kasir')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('kasir') }}">Kasir</a>
+                        </li>
+                    @endif
+                    @if (Auth::user()->role == 'kurir')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('kurir') }}">Kurir</a>
+                        </li>
+                    @endif
+                    @if (Auth::user()->role == 'customer')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('user') }}">user</a>
+                        </li>
+                    @endif
+                    @if (Auth::user()->role == 'admin')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.home') }}">admin</a>
+                        </li>
+                    @endif
+                    @if (Auth::user()->role == 'owner')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('owner') }}">owner</a>
+                        </li>
+                    @endif
                 @endif
-                @if(Auth::user()->role == 'kurir')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('kurir') }}">Kurir</a>
-                </li>
-                @endif
-
-                @if(Auth::user()->role == 'customer')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('user') }}">user</a>
-                </li>
-                @endif
-
-                @if(Auth::user()->role == 'admin')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.home') }}">admin</a>
-                </li>
-                @endif
-
-                @if(Auth::user()->role == 'owner')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('owner') }}">owner</a>
-                </li>
-                @endif
-                @endif
-
             </ul>
         </div>
     </div>

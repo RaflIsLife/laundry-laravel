@@ -1,7 +1,5 @@
 @extends('layouts.kurir') @section('content')
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- Header -->
         <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
             <div>
                 <h1 class="h2">Detail
@@ -14,7 +12,6 @@
             </div>
         </div>
 
-        <!-- Map & Address Section -->
         <div class="row mb-4 g-3">
             <div class="col-12 mb-3">
                 <div class="border rounded p-3 bg-white">
@@ -34,7 +31,6 @@
 
                         </div>
                         <div class="col-md-4">
-                            <!-- Tempat untuk map integration -->
                             <div class="ratio ratio-1x1 bg-secondary rounded">
                                 <div class="d-flex align-items-center justify-content-center text-white" id="map">
 
@@ -71,10 +67,9 @@
                                             </td>
                                             <td>
                                                 @if ($item->type_qty == 'pcs')
-
-                                                Rp {{ number_format($item->layanan->harga_pcs, 0, ',', '.') }}
-                                               @else
-                                                Rp {{ number_format($item->layanan->harga_kg, 0, ',', '.') }}
+                                                    Rp {{ number_format($item->layanan->harga_pcs, 0, ',', '.') }}
+                                                @else
+                                                    Rp {{ number_format($item->layanan->harga_kg, 0, ',', '.') }}
                                                 @endif
                                             </td>
                                             <td>Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
@@ -94,8 +89,6 @@
             </div>
         </div>
 
-
-        <!-- Order Details -->
         <div class="row g-3 mb-5">
             <div class="col-xl-6 col-lg-12">
                 <div class="border rounded p-3 bg-white h-100">
@@ -117,9 +110,6 @@
                                 @endforeach
                             </span>
                         </dd>
-                        {{--
-                        <dt class="col-sm-4">Total Berat</dt>
-                        <dd class="col-sm-8">4.5 kg</dd> --}}
                     </dl>
                 </div>
             </div>
@@ -129,49 +119,45 @@
                     <h5 class="mb-3"><i class="bi bi-wallet2"></i> Pembayaran</h5>
                     <dl class="row d-flex">
                         <div class="col-md-6">
-                        <dt class="col-sm-6">Metode Pembayaran</dt>
-                        <dd class="col-sm-6">{{ ucwords($transaksi->pembayaran) }}</dd>
-
-                        @if ($transaksi->pembayaran == 'cod' && $transaksi->status_pembayaran == 'proses')
-                            <form action="{{ route('kurir.mark-paid', $transaksi) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-success">
-                                    <i class="bi bi-check2-circle"></i> Tandai Pembayaran Selesai
-                                </button>
-                            </form>
+                            <dt class="col-sm-6">Metode Pembayaran</dt>
+                            <dd class="col-sm-6">{{ ucwords($transaksi->pembayaran) }}</dd>
+                            @if ($transaksi->pembayaran == 'cod' && $transaksi->status_pembayaran == 'proses')
+                                <form action="{{ route('kurir.mark-paid', $transaksi) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-check2-circle"></i> Tandai Pembayaran Selesai
+                                    </button>
+                                </form>
                             @else
-                            <dt class="col-sm-4">Subtotal</dt>
-                        <dd class="col-sm-8">Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }},-</dd>
-
-                        @endif
+                                <dt class="col-sm-4">Subtotal</dt>
+                                <dd class="col-sm-8">Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }},-</dd>
+                            @endif
                         </div>
                         <div class="col-md-6">
-
                             @if ($transaksi->pembayaran == 'cod' && $transaksi->status_pembayaran == 'proses')
-                        <dt class="col-sm-4">Subtotal</dt>
-                        <dd class="col-sm-8">Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }},-</dd>
+                                <dt class="col-sm-4">Subtotal</dt>
+                                <dd class="col-sm-8">Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }},-</dd>
                             @endif
-                        <dt class="col-sm-4">Total Ongkir</dt>
-                        <dd class="col-sm-8">Rp {{ number_format($transaksi->ongkir, 0, ',', '.') }},-</dd>
+                            <dt class="col-sm-4">Total Ongkir</dt>
+                            <dd class="col-sm-8">Rp {{ number_format($transaksi->ongkir, 0, ',', '.') }},-</dd>
 
-                        <dt class="col-sm-4">Total Harga</dt>
-                        <dd class="col-sm-8 fs-5"><span class="badge bg-secondary">Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }},- </span></dd>
-
-
+                            <dt class="col-sm-4">Total Harga</dt>
+                            <dd class="col-sm-8 fs-5">
+                                <span class="badge bg-secondary">Rp
+                                    {{ number_format($transaksi->total_harga, 0, ',', '.') }},-
+                                </span>
+                            </dd>
                         </div>
                     </dl>
                 </div>
             </div>
-
         </div>
 
-        <!-- Action Button -->
         <div class="fixed-bottom bg-light py-3 border-top">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
                         <div class="d-flex gap-2 justify-content-end">
-
                             @if (in_array($transaksi->status, ['menunggu pengambilan', 'pengambilan', 'menunggu pengantaran', 'pengantaran']))
                                 <form action="{{ route('kurir.complete-order', $transaksi) }}" method="POST">
                                     @csrf
@@ -201,7 +187,7 @@
         var lngCompany = {{ explode(',', $companyProfile->address)[1] }};
         const addressCompany = '{{ $companyProfile->address }}';
 
-        var map = L.map('map').setView([latCompany, lngCompany], 17); // Set lokasi awal dari database
+        var map = L.map('map').setView([latCompany, lngCompany], 17);
 
         var Stadia_OSMBright = L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.{ext}', {
             minZoom: 0,
@@ -231,7 +217,6 @@
             }).bindPopup((layer) => {
                 return `${layer.feature.properties.distance} ${layer.feature.properties.distance_units}, ${layer.feature.properties.time}`
             }).addTo(map);
-
         }, error => console.log(err));
     </script>
 @endpush

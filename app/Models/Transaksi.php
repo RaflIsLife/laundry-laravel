@@ -9,18 +9,17 @@ class Transaksi extends Model
 {
     use HasFactory;
 
-    Protected $fillable = ['user_id', 'total_harga','ongkir', 'status', 'pembayaran', 'qty', 'cara_pemesanan', 'courier_id', 'status_pembayaran', 'subtotal'];
+    protected $fillable = ['user_id', 'total_harga', 'ongkir', 'status', 'pembayaran', 'qty', 'cara_pemesanan', 'courier_id', 'status_pembayaran', 'subtotal'];
 
-    Public function user()
+    public function user()
     {
-        Return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
-    Public function layanan()
+    public function layanan()
     {
-        Return $this->belongsToMany(Layanan::class, 'transaksi_layanans')
-                    ->withPivot('qty', 'harga')
-                    ->withTimestamps();
+        return $this->belongsToMany(Layanan::class, 'transaksi_layanans')
+            ->withPivot('qty', 'harga')
+            ->withTimestamps();
     }
-
 }

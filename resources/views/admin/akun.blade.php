@@ -8,13 +8,11 @@
                 <a href="{{ route('admin.akun.create') }}" class="btn btn-primary me-2">
                     <i class="bi bi-plus-circle me-1"></i> Tambah Akun
                 </a>
-                {{-- <input type="text" class="form-control" placeholder="Cari pelanggan..."> --}}
             </div>
         </div>
         @if (Session::has('status'))
             <div> <span style="color: red">{{ Session::get('status') }}</span> </div>
         @endif
-
         <div class="card shadow-sm">
             <div class="card-body">
                 <div class="table-responsive">
@@ -39,7 +37,6 @@
                                     <td>{{ $item->phone }}</td>
                                     <td>{{ $item->created_at }}</td>
                                     <td>
-
                                         <span
                                             class="badge @switch($item->role)
                                             @case('owner')
@@ -57,12 +54,8 @@
                                             @case('customer')
                                                 bg-warning
                                                 @break
-
                                             @default
-
                                         @endswitch ">{{ $item->role }}</span>
-
-
                                     </td>
                                     <td>
                                         <a href="{{ route('admin.akun.update', ['id' => $item->id]) }}"
@@ -84,7 +77,6 @@
                         </tbody>
                     </table>
                 </div>
-
             </div>
         </div>
     </div>

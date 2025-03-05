@@ -5,7 +5,6 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Riwayat Pesanan</h2>
         </div>
-
         <div class="card shadow-sm">
             <div class="card-body">
                 <div class="table-responsive">
@@ -22,20 +21,21 @@
                         </thead>
                         <tbody>
                             @foreach ($transaksi as $item)
-                            <tr>
-                                <td>#LAU-{{ $item->id }}</td>
-                                <td>{{ $item->user->name }}</td>
-                                <td>{{ $item->created_at }}</td>
-                                <td>{{ $item->updated_at }}</td>
-                                <td>
-                                    <span class="badge bg-primary">{{ $item->pembayaran }}</span>
-                                </td>
-                                <td>
-                                    <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.detailHistory', ['transaksi' => $item->id]) }}">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td>#LAU-{{ $item->id }}</td>
+                                    <td>{{ $item->user->name }}</td>
+                                    <td>{{ $item->created_at }}</td>
+                                    <td>{{ $item->updated_at }}</td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ $item->pembayaran }}</span>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-sm btn-outline-primary"
+                                            href="{{ route('admin.detailHistory', ['transaksi' => $item->id]) }}">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>

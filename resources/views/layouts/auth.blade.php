@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
     <title>{{ config('app.name', 'Laravel') }} - @yield('title')</title>
 
 
@@ -34,8 +33,7 @@
 @include('template.navbar')
 
 <body class="bg-light"
-    style="background: linear-gradient(55deg, white, blue);
- background-repeat: no-repeat; background-size: cover; background-position: center;">
+    style="background: linear-gradient(55deg, white, blue); background-repeat: no-repeat; background-size: cover; background-position: center;">
     <div class="container">
         <div class="row justify-content-center min-vh-100 align-items-center">
             <div class="col-md-8 col-lg-6 ">
@@ -49,7 +47,6 @@
     <script>
         var map = L.map('map').setView([-6.934930, 106.925816], 17);
 
-        // Tambahkan tile layer
         var Stadia_OSMBright = L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.{ext}', {
             minZoom: 0,
             maxZoom: 20,
@@ -57,26 +54,21 @@
             ext: 'png'
         }).addTo(map);
 
-        // Array untuk menyimpan marker
         var markers = [];
 
         map.on('click', function(e) {
             var lat = e.latlng.lat;
             var lng = e.latlng.lng;
 
-            // Hapus marker sebelumnya jika hanya ingin satu titik
             markers.forEach(marker => map.removeLayer(marker));
             markers = [];
 
-            // Tambahkan marker ke peta
             var marker = L.marker([lat, lng]).addTo(map);
             markers.push(marker);
 
-            // Simpan koordinat ke input
             document.getElementById('latitude').value = lat;
             document.getElementById('longitude').value = lng;
         });
-        
     </script>
 
 </body>

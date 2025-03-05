@@ -10,7 +10,6 @@ class OwnerController extends Controller
 {
     public function home()
     {
-        // Mengambil semua transaksi
         $transaksi = Transaksi::all();
 
         // Mengambil data pelanggan dengan role 'customer'

@@ -9,13 +9,11 @@ class TransaksiLayanan extends Model
 {
     use HasFactory;
 
-    Protected $table = 'transaksi_layanans';
-    Protected $fillable = ['transaksi_id', 'layanan_id', 'qty', 'type_qty', 'harga'];
+    protected $table = 'transaksi_layanans';
+    protected $fillable = ['transaksi_id', 'layanan_id', 'qty', 'type_qty', 'harga'];
 
     public function layanan()
-{
-    return $this->belongsTo(Layanan::class, 'layanan_id');
-}
-
-
+    {
+        return $this->belongsTo(Layanan::class, 'layanan_id');
+    }
 }

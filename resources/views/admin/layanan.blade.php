@@ -8,7 +8,6 @@
                 <a href="{{ route('admin.layanan.create') }}" class="btn btn-primary me-2">
                     <i class="bi bi-plus-circle me-1"></i> Tambah Layanan
                 </a>
-                {{-- <input type="text" class="form-control" placeholder="Cari pelanggan..."> --}}
             </div>
         </div>
         @if (Session::has('status'))
@@ -31,7 +30,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Dummy Data -->
                             @foreach ($data as $item)
                                 <tr>
                                     <td>{{ $item->id }}</td>
@@ -41,21 +39,17 @@
                                     <td>{{ $item->created_at }}</td>
                                     <td>{{ $item->updated_at }}</td>
                                     <td>
-                                        <a href="{{ route('admin.layanan.update', ['id'=>$item->id ]) }}" class="btn btn-sm btn-warning me-1">
+                                        <a href="{{ route('admin.layanan.update', ['id' => $item->id]) }}"
+                                            class="btn btn-sm btn-warning me-1">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-
             </div>
         </div>
     </div>
-
-
 @endsection
-

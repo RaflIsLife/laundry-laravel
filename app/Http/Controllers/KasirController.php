@@ -80,12 +80,12 @@ class KasirController extends Controller
 
     public function transaksi()
     {
-        $transaksi = Transaksi::whereNotIn('status',['selesai'])->with('user')->oldest('created_at')->get();
+        $transaksi = Transaksi::whereNotIn('status', ['selesai'])->with('user')->oldest('created_at')->get();
         return view('kasir/transaksi', compact('transaksi'));
     }
     public function history()
     {
-        $transaksi = Transaksi::where('status',['selesai'])->with('user')->latest('updated_at')->get();
+        $transaksi = Transaksi::where('status', ['selesai'])->with('user')->latest('updated_at')->get();
         return view('kasir/history', compact('transaksi'));
     }
 

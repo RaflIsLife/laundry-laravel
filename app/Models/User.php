@@ -46,9 +46,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    Public function transaksi()
+    public function transaksi()
     {
-        Return $this->hasMany(Transaksi::class);
+        return $this->hasMany(Transaksi::class);
     }
-
 }
