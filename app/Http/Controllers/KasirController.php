@@ -48,7 +48,7 @@ class KasirController extends Controller
             ]);
             if ($request->has('pengantaran')) {
                 $user->update([
-                    'address' => $request->latitude . ',' . $request->longitude,
+                    'coordinate' => $request->latitude . ',' . $request->longitude,
                 ]);
             }
         }

@@ -109,7 +109,7 @@
     <script>
         $(document).ready(function() {
 
-            const addressUser = '{{ Auth::user()->address }}';
+            const addressUser = '{{ Auth::user()->coordinate }}';
             const addressCompany = '{{ $companyProfile->address }}';
 
             var jarak = 0;

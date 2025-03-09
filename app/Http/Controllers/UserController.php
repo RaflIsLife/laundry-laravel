@@ -62,6 +62,7 @@ class UserController extends Controller
             'phone' => 'required|numeric|unique:users,phone',
             'latitude' => 'required',
             'longitude' => 'required',
+            'address' => 'required',
         ], [
             'email.unique' => 'Email sudah terpakai, mohon ganti.',
             'phone.unique' => 'Nomor HP sudah terpakai, mohon ganti.'
@@ -72,7 +73,8 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'phone' => $request->phone,
-            'address' => $request->latitude . ',' . $request->longitude,
+            'coordinate' => $request->latitude . ',' . $request->longitude,
+            'address' => $request->address,
         ]);
 
         return redirect()->route('login')->with('status', 'Berhasil Register, silahkan login');
@@ -239,8 +241,9 @@ class UserController extends Controller
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             // 'password' => 'required|max:255',
             'phone' => 'required|max:255',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'latitude' => 'required',
+            'longitude' => 'required',
+            'address' => 'required',
         ]);
 
         // Update data user
@@ -249,7 +252,8 @@ class UserController extends Controller
             'email' => $request->email,
             // 'password' => $request->password,
             'phone' => $request->phone,
-            'address' => $request->latitude . ',' . $request->longitude,
+            'coordinate' => $request->latitude . ',' . $request->longitude,
+            'address' => $request->address,
         ]);
 
         return redirect()->route('profile')->with('status', 'Profil berhasil diperbarui.');

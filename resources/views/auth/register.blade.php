@@ -52,6 +52,7 @@
                 <div class="mb-4">
                     <label for="alamat" class="form-label">Alamat</label>
                     <div id="map" class="" style="height: 400px"></div>
+                    <input type="hidden" id="address" name="address">
                     <input type="hidden" id="latitude" name="latitude">
                     <input type="hidden" id="longitude" name="longitude">
                 </div>

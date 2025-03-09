@@ -55,10 +55,13 @@
         }).addTo(map);
 
         var markers = [];
+        const myAPIKey = '{{ env('GEOAPIFY_API_KEY') }}';
 
         map.on('click', function(e) {
             var lat = e.latlng.lat;
             var lng = e.latlng.lng;
+            const reverseGeocodeUrl =
+                `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&type=amenity&lang=id&format=json&apiKey=${myAPIKey}`;
 
             markers.forEach(marker => map.removeLayer(marker));
             markers = [];
@@ -66,9 +69,17 @@
             var marker = L.marker([lat, lng]).addTo(map);
             markers.push(marker);
 
+            fetch(reverseGeocodeUrl)
+                .then(response => response.json())
+                .then(result => {
+                    const address = result.results[0].formatted;
+                    document.getElementById('address').value = address;
+
+                })
+                .catch(error => console.log('error', error));
             document.getElementById('latitude').value = lat;
             document.getElementById('longitude').value = lng;
-        });
+        })
     </script>
 
 </body>

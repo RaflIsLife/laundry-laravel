@@ -27,7 +27,8 @@ class DatabaseSeeder extends Seeder
             'phone' => '082120467500',
             'password' => bcrypt(123),
             'role' => 'customer',
-            'address' => '-6.917550,106.919877',
+            'coordinate' => '-6.917550,106.919877',
+            'address' => 'Homeschooling Permata Hati, Jalan Brawijaya Gang Brawijaya III 16, Kota Sukabumi 43121, Jawa Barat, Indonesia',
         ]);
         User::create([
             'name' => 'Custom2',
@@ -35,7 +36,8 @@ class DatabaseSeeder extends Seeder
             'phone' => '082120467510',
             'password' => bcrypt(123),
             'role' => 'customer',
-            'address' => '-6.950407,106.905595',
+            'coordinate' => '-6.950407,106.905595',
+            'address' => 'ANHA Store, Jalan Merdeka Cipanengah, Kota Sukabumi 43134, Jawa Barat, Indonesia',
         ]);
         User::create([
             'name' => 'Kasir',

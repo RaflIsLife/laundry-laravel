@@ -42,9 +42,10 @@
                             <label class="form-label">Alamat</label>
                             <div id="map" class="" style="height: 400px"></div>
                             <input type="hidden" id="latitude" name="latitude"
-                                value="{{ explode(',', Auth::user()->address)[0] }}">
+                                value="{{ explode(',', Auth::user()->coordinate)[0] }}">
                             <input type="hidden" id="longitude" name="longitude"
-                                value="{{ explode(',', Auth::user()->address)[1] }}">
+                                value="{{ explode(',', Auth::user()->coordinate)[1] }}">
+                            <input type="hidden" id="address" name="address" value="{{ Auth::user()->address }}">
                         </div>
 
                         <div class="d-flex justify-content-end">
@@ -87,8 +88,8 @@
     </style>
 
     <script>
-        var lat = {{ explode(',', Auth::user()->address)[0] }};
-        var lng = {{ explode(',', Auth::user()->address)[1] }};
+        var lat = {{ explode(',', Auth::user()->coordinate)[0] }};
+        var lng = {{ explode(',', Auth::user()->coordinate)[1] }};
 
         var map = L.map('map').setView([lat, lng], 17);
 
@@ -103,20 +104,37 @@
             draggable: true
         }).addTo(map)
 
-        // Saat user drag marker, update koordinat di input
+        const myAPIKey = '{{ env('GEOAPIFY_API_KEY') }}';
+        function address(newLat, newLng) {
+            const reverseGeocodeUrl =
+                `https://api.geoapify.com/v1/geocode/reverse?lat=${newLat}&lon=${newLng}&type=amenity&lang=id&format=json&apiKey=${myAPIKey}`;
+
+            fetch(reverseGeocodeUrl)
+                .then(response => response.json())
+                .then(result => {
+                    const address = result.results[0].formatted;
+                    document.getElementById('address').value = address;
+                })
+                .catch(error => console.log('error', error));
+        }
+
         marker.on('dragend', function(e) {
             var position = marker.getLatLng();
-            document.getElementById('latitude').value = position.lat;
-            document.getElementById('longitude').value = position.lng;
+            var newLat = position.lat;
+            var newLng = position.lng;
+
+            address(newLat, newLng);
+            document.getElementById('latitude').value = newLat;
+            document.getElementById('longitude').value = newLng;
         });
 
-        // Saat user klik di peta, pindahkan marker
         map.on('click', function(e) {
             var newLat = e.latlng.lat;
             var newLng = e.latlng.lng;
 
             marker.setLatLng([newLat, newLng])
 
+            address(newLat, newLng);
             document.getElementById('latitude').value = newLat;
             document.getElementById('longitude').value = newLng;
         });

@@ -17,18 +17,22 @@
                 <div class="border rounded p-3 bg-white">
                     <h5 class="mb-3"><i class="bi bi-geo-alt"></i> Alamat Tujuan</h5>
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-8 d-flex flex-column">
                             <div class="mb-3">
                                 <h4 class="fw-bold">{{ $transaksi->user->name }}</h4>
-                                <p class="mb-1">{{ $transaksi->user->address }}</p>
-                                <a class="text-muted" href="http://wa.me/62{{ ltrim($transaksi->user->phone, 0) }}" target="_blank" rel="noopener noreferrer">
+                                <p class="mb-1 col-md-5">{{ $transaksi->user->address }}</p>
+                                <a class="text-muted" href="http://wa.me/62{{ ltrim($transaksi->user->phone, 0) }}"
+                                    target="_blank" rel="noopener noreferrer">
                                     <small class="d-flex align-items-center">
                                         <i class="bi bi-whatsapp pr-2"></i>{{ $transaksi->user->phone }}
                                     </small>
                                 </a>
                             </div>
-
-
+                            <div class="mt-auto">
+                                <a class="btn btn-success btn-lg" id="gMaps" target="_blank" rel="noopener noreferrer">
+                                    <i class="bi bi-map"></i> Buka di Google Maps
+                                </a>
+                            </div>
                         </div>
                         <div class="col-md-4">
                             <div class="ratio ratio-1x1 bg-secondary rounded">
@@ -179,13 +183,16 @@
     <script>
         new DataTable('#dataTables');
 
-        var latUser = {{ explode(',', $transaksi->user->address)[0] }};
-        var lngUser = {{ explode(',', $transaksi->user->address)[1] }};
-        const addressUser = '{{ $transaksi->user->address }}';
+        var latUser = {{ explode(',', $transaksi->user->coordinate)[0] }};
+        var lngUser = {{ explode(',', $transaksi->user->coordinate)[1] }};
+        const addressUser = '{{ $transaksi->user->coordinate }}';
 
         var latCompany = {{ explode(',', $companyProfile->address)[0] }};
         var lngCompany = {{ explode(',', $companyProfile->address)[1] }};
         const addressCompany = '{{ $companyProfile->address }}';
+
+        var gMaps = `https://www.google.com/maps/dir/?api=1&origin=${addressCompany}&destination=${addressUser}&travelmode=two-wheeler`
+        document.getElementById('gMaps').href = gMaps;
 
         var map = L.map('map').setView([latCompany, lngCompany], 17);
 
@@ -203,10 +210,10 @@
             method: 'GET',
         };
         const myAPIKey = '{{ env('GEOAPIFY_API_KEY') }}';
-        const url =
+        const routingUrl =
             `https://api.geoapify.com/v1/routing?waypoints=${addressCompany}|${addressUser}&mode=motorcycle&details=instruction_details&apiKey=${myAPIKey}`;
 
-        fetch(url).then(res => res.json()).then(result => {
+        fetch(routingUrl).then(res => res.json()).then(result => {
             L.geoJSON(result, {
                 style: (feature) => {
                     return {
