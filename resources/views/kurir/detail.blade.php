@@ -3,12 +3,15 @@
         <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
             <div>
                 <h1 class="h2">Detail
-                    @if ($transaksi->status == 'menunggu pengambilan')
+                    @if ($transaksi->status == 'menunggu pengambilan' || $transaksi->status == 'pengambilan')
                         Pengambilan
-                    @elseif ($transaksi->status == 'menunggu pengantaran')
+                    @elseif ($transaksi->status == 'menunggu pengantaran' || $transaksi->status == 'pengantaran')
                         Pengantaran
                     @endif
                 </h1>
+                @if (Session::has('status'))
+                    <div> <span style="color: red">{{ Session::get('status') }}</span> </div>
+                @endif
             </div>
         </div>
 
@@ -191,7 +194,8 @@
         var lngCompany = {{ explode(',', $companyProfile->address)[1] }};
         const addressCompany = '{{ $companyProfile->address }}';
 
-        var gMaps = `https://www.google.com/maps/dir/?api=1&origin=${addressCompany}&destination=${addressUser}&travelmode=two-wheeler`
+        var gMaps =
+            `https://www.google.com/maps/dir/?api=1&origin=${addressCompany}&destination=${addressUser}&travelmode=two-wheeler`
         document.getElementById('gMaps').href = gMaps;
 
         var map = L.map('map').setView([latCompany, lngCompany], 17);

@@ -40,7 +40,7 @@
                                     <input class="form-check-input" type="checkbox" id="tambah-alamat" name="pengantaran"
                                         value="ya">
                                     <label class="form-check-label" for="tambah-alamat">
-                                        Tambahkan Alamat Pengambilan
+                                        Antar Pesanan Setelah Selesai
                                     </label>
                                 </div>
                             </div>
@@ -50,9 +50,9 @@
                             <div class="row mb-3">
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Cari Alamat</label>
+                                        {{-- <label class="form-label">Cari Alamat</label>
                                         <input type="text" class="form-control" id="search-alamat"
-                                            name="alamat_pengambilan">
+                                            name="alamat_pengambilan"> --}}
                                     </div>
                                 </div>
                             </div>
@@ -238,7 +238,7 @@
 
                 getDistance().then(jarak => {
                     // 100 meter = 200 perak
-                    // ceil = membulatkan desimalke yang terdekat
+                    // ceil = membulatkan desimal ke yang terdekat
                     var ongkir = Math.ceil(jarak / 100) * 200;
                     ongkirInt = ongkir;
 

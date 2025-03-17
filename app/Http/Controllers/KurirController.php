@@ -24,14 +24,17 @@ class KurirController extends Controller
         if ($transaksi->pembayaran === 'cod' && $transaksi->status_pembayaran === 'proses') {
             $transaksi->status_pembayaran = 'lunas';
             $transaksi->save();
-            return redirect()->back()->with('success', 'Status pembayaran telah diubah menjadi lunas.');
+            return redirect()->back()->with('status', 'Status pembayaran telah diubah menjadi lunas.');
         }
-        return redirect()->back()->with('error', 'Gagal mengubah status pembayaran.');
+        return redirect()->back()->with('status', 'Gagal mengubah status pembayaran.');
     }
 
     public function completeOrder(Request $request, Transaksi $transaksi)
     {
         if ($transaksi->courier_id !== auth()->id()) abort(403);
+        if ($transaksi->pembayaran === 'cod' && $transaksi->status_pembayaran === 'proses') {
+            return redirect()->back()->with('status', 'Tolong konfirmasi pembayaran cod terlebih dahulu.');
+        }
 
         $nextStatusMap = [
             'menunggu pengambilan' => 'antrian laundry',

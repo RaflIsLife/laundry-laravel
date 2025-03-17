@@ -41,7 +41,6 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <input class="form-control" name="ongkir" type="hidden" id="ongkir" value="0">
                                     <div class="col-md-3">
                                         <label class="form-label">Akumulasi Harga</label>
                                         <input type="text" class="form-control akumulasi-harga" readonly value="0">
@@ -55,12 +54,13 @@
                                 </div>
                             </div>
                         </div>
-
+                        
                         <button type="button" class="btn btn-secondary btn-sm" id="tambah-item">
                             <i class="bi bi-plus-lg me-2"></i>Tambah Pesanan
                         </button>
-
+                        
                         <div class="row mt-3">
+                            <input class="form-control" name="ongkir" type="hidden" id="ongkir" value="0">
                             <div class="col text-end">
                                 <h5>SubTotal: <span id="total-harga-layanan">0</span></h5>
                                 <h5>Total Ongkir: <span id="ongkirView">0</span></h5>
@@ -134,7 +134,7 @@
 
             getDistance().then(jarak => {
                 // 100 meter = 200 perak
-                // ceil = membulatkan desimalke yang terdekat
+                // ceil = membulatkan desimalk yang terdekat
                 var ongkir = Math.ceil(jarak / 100) * 200 * 2;
 
                 document.getElementById('ongkir').value = parseInt(ongkir);

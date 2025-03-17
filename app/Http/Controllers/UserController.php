@@ -53,31 +53,92 @@ class UserController extends Controller
     {
         return view('auth/register');
     }
+
+    //Haversine formula
+    public function calculateDistance($address, $lat2, $lon2)
+    {
+        $radius = 6371000; // Radius bumi(meter)
+
+        $coordinate = explode(',', $address);
+        $lat1 = $coordinate[0];
+        $lon1 = $coordinate[1];
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        $distance = $radius * $c;
+
+        return $distance;
+    }
+
     public function postRegister(Request $request)
     {
-        $cek = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required',
-            'phone' => 'required|numeric|unique:users,phone',
-            'latitude' => 'required',
-            'longitude' => 'required',
-            'address' => 'required',
-        ], [
-            'email.unique' => 'Email sudah terpakai, mohon ganti.',
-            'phone.unique' => 'Nomor HP sudah terpakai, mohon ganti.'
-        ]);
+        $userOffline = User::where([
+            ['name', $request->name],
+            ['phone', $request->phone],
+            ['email', null],
+            ['password', null],
+        ])->first();
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'phone' => $request->phone,
-            'coordinate' => $request->latitude . ',' . $request->longitude,
-            'address' => $request->address,
-        ]);
+        if ($userOffline) {
+            $cek = $request->validate([
+                'name' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required',
+                'phone' => 'required|numeric',
+                'latitude' => 'required',
+                'longitude' => 'required',
+                'address' => 'required',
+            ], [
+                'email.unique' => 'Email sudah terpakai, mohon ganti.',
+                'phone.unique' => 'Nomor HP sudah terpakai, mohon ganti.'
+            ]);
 
-        return redirect()->route('login')->with('status', 'Berhasil Register, silahkan login');
+            if ($userOffline->coordinate != null) {
+                $distance = $this->calculateDistance($userOffline->coordinate, $cek['latitude'], $cek['longitude']);
+                if ($distance > 50) {
+                    return back()->with('status', 'Nomor HP sudah terpakai, mohon ganti.');
+                }
+            }
+
+            $userOffline->update([
+                'email' => $cek['email'],
+                'password' => bcrypt($cek['password']),
+                'coordinate' => $cek['latitude'] . ',' . $cek['longitude'],
+                'address' => $cek['address'],
+            ]);
+            return redirect()->route('login')->with('status', 'Berhasil Register menggunakan akun Offline, silahkan login');
+        } else {
+            $cek = $request->validate([
+                'name' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required',
+                'phone' => 'required|numeric|unique:users,phone',
+                'latitude' => 'required',
+                'longitude' => 'required',
+                'address' => 'required',
+            ], [
+                'email.unique' => 'Email sudah terpakai, mohon ganti.',
+                'phone.unique' => 'Nomor HP sudah terpakai, mohon ganti.'
+            ]);
+
+            User::create([
+                'name' => $cek['name'],
+                'email' => $cek['email'],
+                'password' => bcrypt($cek['password']),
+                'phone' => $cek['phone'],
+                'coordinate' => $cek['latitude'] . ',' . $cek['longitude'],
+                'address' => $cek['address'],
+            ]);
+
+            return redirect()->route('login')->with('status', 'Berhasil Register, silahkan login');
+        }
     }
 
 
@@ -109,22 +170,19 @@ class UserController extends Controller
 
     public function assignPendingOrders()
     {
-        // Ambil transaksi yang belum memiliki kurir (diurutkan dari yang paling lama)
         $pendingOrders = Transaksi::whereNull('courier_id')
             ->where('pengantaran', 'ya')
-            ->whereIn('status', ['menunggu pengambilan', 'menunggu pengantaran']) // Gunakan whereIn
+            ->whereIn('status', ['menunggu pengambilan', 'menunggu pengantaran']) // pake whereIn
             ->orderBy('created_at', 'asc')
             ->get();
 
         foreach ($pendingOrders as $order) {
-            // Cari kurir tersedia dengan pesanan selesai paling sedikit
             $availableCourier = User::where('role', 'kurir')
                 ->where('status', 'available')
                 ->orderBy('daily_completed_orders', 'asc')
                 ->first();
 
             if ($availableCourier) {
-                // Assign ke kurir
                 $order->courier_id = $availableCourier->id;
                 if ($order->status == 'menunggu pengambilan') {
                     $order->status = 'pengambilan';
@@ -133,11 +191,10 @@ class UserController extends Controller
                 }
                 $order->save();
 
-                // Update status kurir
                 $availableCourier->status = 'on_delivery';
                 $availableCourier->save();
 
-                break; // Hanya assign satu pesanan per eksekusi
+                break;
             }
         }
     }
@@ -150,7 +207,7 @@ class UserController extends Controller
             'services.*.service_id' => 'required|exists:layanans,id',
             'services.*.quantity' => 'required|numeric|min:0.1',
             'services.*.unit' => 'required|string',
-            'ongkir' => 'required|int',
+            'ongkir' => 'required',
         ]);
 
 
@@ -252,9 +309,17 @@ class UserController extends Controller
             'email' => $request->email,
             // 'password' => $request->password,
             'phone' => $request->phone,
-            'coordinate' => $request->latitude . ',' . $request->longitude,
-            'address' => $request->address,
         ]);
+
+        $transaksi = Transaksi::where('user_id', Auth::id())->whereNotIn('status', ['selesai'])->get();
+        if ($transaksi) {
+            return redirect()->route('profile')->with('status', 'Profil berhasil diperbarui. Namun, alamat gagal diperbarui karena masih ada pesanan yang belum selesai.');
+        } else {
+            $user->update([
+                'coordinate' => $request->latitude . ',' . $request->longitude,
+                'address' => $request->address,
+            ]);
+        }
 
         return redirect()->route('profile')->with('status', 'Profil berhasil diperbarui.');
     }

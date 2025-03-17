@@ -5,7 +5,9 @@
     <div class="auth-card card" style="background-color: rgba(255, 255, 255, 0.751);">
         <div class="card-body p-4 p-sm-5">
             <h2 class="mb-4 text-center">Buat Akun</h2>
-
+            @if (Session::has('status'))
+                <div> <span style="color: red">{{ Session::get('status') }}</span> </div>
+            @endif
             <form action="{{ route('postRegister') }}" method="POST" class="auth-form">
                 @csrf
                 <div class="mb-3">
