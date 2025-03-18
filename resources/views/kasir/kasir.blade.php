@@ -22,14 +22,16 @@
                         <div class="row mb-5">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Nama Pelanggan</label>
-                                    <input type="text" class="form-control" name="customer_name" required>
+                                    <label for="name" class="form-label">Nama Pelanggan</label>
+                                    <input type="text" id="name"class="form-control" name="name"
+                                        autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Nomor WhatsApp</label>
-                                    <input type="tel" class="form-control" name="customer_phone" required>
+                                    <label for="nohp" class="form-label">Nomor WhatsApp</label>
+                                    <input type="tel" id="phone" class="form-control" name="phone"
+                                        autocomplete="off" required>
                                 </div>
                             </div>
                         </div>
@@ -163,8 +165,11 @@
             </form>
         </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {{-- todo: buat auto complete untuk coordinate pada map --}}
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- jQuery UI JS -->
+    <script src="../../../js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function() {
             let nomorItem = 1;
@@ -172,6 +177,38 @@
             function formatRupiah(angka) {
                 return 'Rp ' + angka.toLocaleString('id-ID');
             }
+
+            $(function() {
+                // Terapkan autocomplete ke kedua input
+                $("#name, #phone").autocomplete({
+                        source: function(request, response) {
+                            $.ajax({
+                                url: "{{ route('autocomplete') }}",
+                                dataType: "json",
+                                data: {
+                                    term: request.term
+                                },
+                                success: function(data) {
+                                    response(data);
+                                }
+                            });
+                        },
+                        minLength: 1,
+                        select: function(event, ui) {
+                            // Isi kedua input saat salah satu opsi dipilih
+                            $("#name").val(ui.item.name);
+                            $("#phone").val(ui.item.phone);
+                            $("#coordinate").val(ui.item.coordinate);
+                            return false;
+                        }
+                    })
+                    // Kustomisasi tampilan dropdown
+                    .autocomplete("instance")._renderItem = function(ul, item) {
+                        return $("<li>")
+                            .append("<div>" + item.label + "</div>")
+                            .appendTo(ul);
+                    };
+            });
 
             $('#tambah-alamat').change(function() {
                 const container = $('#alamat-container');

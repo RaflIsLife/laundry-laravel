@@ -25,7 +25,8 @@ class User extends Authenticatable
         'address',
         'coordinate',
         'role',
-
+        'status',
+        'daily_completed_order',
     ];
 
     /**

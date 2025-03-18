@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/kasir/transaksi/{transaksi}/status', 'KasirController@updateStatus')->name('kasir.transaksi.update-status');
         Route::get('/kasir/history', 'KasirController@history')->name('kasir.history');
         Route::get('/kasir/detailPesanan/{transaksi}', 'KasirController@detailPesanan')->name('kasir.detailPesanan');
+        Route::get('/autocomplete', 'KasirController@autocomplete')->name('autocomplete');
     });
 
     Route::middleware('check:owner')->group(function () {

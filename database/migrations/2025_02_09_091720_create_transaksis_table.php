@@ -16,7 +16,7 @@ class CreateTransaksisTable extends Migration
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('courier_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('courier_id')->nullable()->constrained('users');
             $table->integer('ongkir')->default(0);
             $table->integer('total_harga');
             $table->integer('subtotal');

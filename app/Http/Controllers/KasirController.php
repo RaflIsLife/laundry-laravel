@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\CompanyProfile;
 use App\Models\Layanan;
 use App\Models\Transaksi;
@@ -15,8 +16,35 @@ class KasirController extends Controller
     public function kasir()
     {
         $layanan = Layanan::all();
+        $user = User::where('role', 'customer')->get();
         $companyProfile = CompanyProfile::first();
-        return view('kasir/kasir', compact('layanan', 'companyProfile'));
+        return view('kasir/kasir', compact('layanan', 'companyProfile', 'user'));
+    }
+
+    public function autocomplete(Request $request)
+    {
+        $term = $request->get('term');
+        $results = [];
+
+        // Ganti 'your_table' dengan nama tabel Anda
+        $data = DB::table('users')
+            ->where('name', 'LIKE', '%' . $term . '%')
+            ->orWhere('phone', 'LIKE', '%' . $term . '%')
+            ->orWhere('coordinate', 'LIKE', '%' . $term . '%')
+            ->get();
+
+        foreach ($data as $row) {
+            $results[] = [
+                'name'  => $row->name,
+                'phone'  => $row->phone,
+                'coordinate'  => $row->coordinate,
+                // 'label' akan tampil pada dropdown (gabungan nama dan nohp)
+                'label' => $row->name . ' - ' . $row->phone . ' - ' . $row->coordinate,
+                // 'value' bisa disesuaikan, misalnya mengisi input nama
+                'value' => $row->name,
+            ];
+        }
+        return response()->json($results);
     }
 
     public function postKasir(Request $request, User $user)
@@ -46,11 +74,11 @@ class KasirController extends Controller
                 'phone' => $data['customer_phone'],
                 'role' => 'customer',
             ]);
-            if ($request->has('pengantaran')) {
-                $user->update([
-                    'coordinate' => $request->latitude . ',' . $request->longitude,
-                ]);
-            }
+            // if ($request->has('pengantaran')) {
+            //     $user->update([
+            //         'coordinate' => $request->latitude . ',' . $request->longitude,
+            //     ]);
+            // }
         }
         $totalHarga = 0;
         foreach ($data['services'] as $service) {
