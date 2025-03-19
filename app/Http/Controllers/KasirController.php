@@ -16,9 +16,8 @@ class KasirController extends Controller
     public function kasir()
     {
         $layanan = Layanan::all();
-        $user = User::where('role', 'customer')->get();
         $companyProfile = CompanyProfile::first();
-        return view('kasir/kasir', compact('layanan', 'companyProfile', 'user'));
+        return view('kasir/kasir', compact('layanan', 'companyProfile'));
     }
 
     public function autocomplete(Request $request)
@@ -28,9 +27,12 @@ class KasirController extends Controller
 
         // Ganti 'your_table' dengan nama tabel Anda
         $data = DB::table('users')
-            ->where('name', 'LIKE', '%' . $term . '%')
-            ->orWhere('phone', 'LIKE', '%' . $term . '%')
-            ->orWhere('coordinate', 'LIKE', '%' . $term . '%')
+            ->where('role', 'customer')
+            ->where(function ($query) use ($term) {
+                $query->where('name', 'LIKE', '%' . $term . '%')
+                    ->orWhere('phone', 'LIKE', '%' . $term . '%')
+                    ->orWhere('coordinate', 'LIKE', '%' . $term . '%');
+            })
             ->get();
 
         foreach ($data as $row) {
@@ -50,10 +52,11 @@ class KasirController extends Controller
     public function postKasir(Request $request, User $user)
     {
         $data = $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_phone' => 'required|string|max:20',
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
             'latitude' => 'sometimes',
             'longitude' => 'sometimes',
+            'address' => 'sometimes',
             'ongkir' => 'sometimes',
             'pengantaran' => 'sometimes',
             'pembayaran' => 'required|in:qris,cod',
@@ -63,22 +66,15 @@ class KasirController extends Controller
             'services.*.quantity' => 'required|numeric|min:0.1',
             'services.*.unit' => 'required|in:pcs,kg',
         ]);
-
         // Hitung total
-
-        $user = User::where('phone', $data['customer_phone'])->first();
+        $user = User::where('phone', $data['phone'])->first();
 
         if (!$user) {
             $user = User::create([
-                'name' => $data['customer_name'],
-                'phone' => $data['customer_phone'],
+                'name' => $data['name'],
+                'phone' => $data['phone'],
                 'role' => 'customer',
             ]);
-            // if ($request->has('pengantaran')) {
-            //     $user->update([
-            //         'coordinate' => $request->latitude . ',' . $request->longitude,
-            //     ]);
-            // }
         }
         $totalHarga = 0;
         foreach ($data['services'] as $service) {
@@ -103,6 +99,10 @@ class KasirController extends Controller
             'pengantaran' => 'tidak',
         ]);
         if ($request->has('pengantaran')) {
+            $user->update([
+                'coordinate' => $data['latitude'] . ',' . $data['longitude'],
+                'address' => $data['address'],
+            ]);
             $transaksi->update([
                 'ongkir' => $data['ongkir'],
                 'total_harga' => ($totalHarga + $data['ongkir']),

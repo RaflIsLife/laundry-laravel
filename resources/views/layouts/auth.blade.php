@@ -60,10 +60,10 @@
         map.on('click', function(e) {
             var lat = e.latlng.lat;
             var lng = e.latlng.lng;
-            
+
             markers.forEach(marker => map.removeLayer(marker));
             markers = [];
-            
+
             const reverseGeocodeUrl =
                 `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&type=amenity&lang=id&format=json&apiKey=${myAPIKey}`;
             fetch(reverseGeocodeUrl)
@@ -74,11 +74,12 @@
 
                 })
                 .catch(error => console.log('error', error));
-            var marker = L.marker([lat, lng]).addTo(map);
-            markers.push(marker);
 
             document.getElementById('latitude').value = lat;
             document.getElementById('longitude').value = lng;
+
+            var marker = L.marker([lat, lng]).addTo(map);
+            markers.push(marker);
         })
     </script>
 

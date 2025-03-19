@@ -70,6 +70,7 @@
                         <div>
                             <input type="hidden" id="latitude" name="latitude">
                             <input type="hidden" id="longitude" name="longitude">
+                            <input type="hidden" id="address" name="address">
                         </div>
                         <div id="daftar-pesanan">
                             <div class="item-pesanan mb-4">
@@ -173,9 +174,33 @@
     <script>
         $(document).ready(function() {
             let nomorItem = 1;
+            let coordinate;
 
             function formatRupiah(angka) {
                 return 'Rp ' + angka.toLocaleString('id-ID');
+            }
+
+            var map = L.map('map').setView([-6.934930, 106.925816], 17);
+            var Stadia_OSMBright = L.tileLayer(
+                'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.{ext}', {
+                    minZoom: 0,
+                    maxZoom: 20,
+                    attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    ext: 'png'
+                }).addTo(map);
+
+            var markers = [];
+
+            // Fungsi untuk update marker di map berdasarkan coordinate baru
+            function updateMapMarker(lat, lng) {
+                // Hapus marker yang ada
+                markers.forEach(marker => map.removeLayer(marker));
+                markers = [];
+                // Tambahkan marker baru
+                var newMarker = L.marker([lat, lng]).addTo(map);
+                markers.push(newMarker);
+                // Pindahkan tampilan map ke lokasi marker baru
+                map.setView([lat, lng], 17);
             }
 
             $(function() {
@@ -198,7 +223,17 @@
                             // Isi kedua input saat salah satu opsi dipilih
                             $("#name").val(ui.item.name);
                             $("#phone").val(ui.item.phone);
-                            $("#coordinate").val(ui.item.coordinate);
+                            if (ui.item.coordinate) {
+                                coordinate = (ui.item.coordinate).split(",");
+                                $("#latitude").val(coordinate[0]);
+                                $("#longitude").val(coordinate[1]);
+
+                                updateMapMarker(parseFloat(coordinate[0]), parseFloat(coordinate[
+                                    1]));
+
+                            }
+
+                            // updateMapMarker(parseFloat(coordinate[0]), parseFloat(coordinate[1]));
                             return false;
                         }
                     })
@@ -227,17 +262,6 @@
                 }
             });
 
-            var map = L.map('map').setView([-6.934930, 106.925816], 17);
-
-            var Stadia_OSMBright = L.tileLayer(
-                'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.{ext}', {
-                    minZoom: 0,
-                    maxZoom: 20,
-                    attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                    ext: 'png'
-                }).addTo(map);
-
-            var markers = [];
             var ongkirInt = 0;
             map.on('click', function(e) {
                 var lat = e.latlng.lat;
@@ -247,9 +271,6 @@
 
                 markers.forEach(marker => map.removeLayer(marker));
                 markers = [];
-
-                var marker = L.marker([lat, lng]).addTo(map);
-                markers.push(marker);
 
                 document.getElementById('latitude').value = lat;
                 document.getElementById('longitude').value = lng;
@@ -273,6 +294,17 @@
                     }
                 }
 
+                const reverseGeocodeUrl =
+                    `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&type=amenity&lang=id&format=json&apiKey=${myAPIKey}`;
+                fetch(reverseGeocodeUrl)
+                    .then(response => response.json())
+                    .then(result => {
+                        const address = result.results[0].formatted;
+                        document.getElementById('address').value = address;
+
+                    })
+                    .catch(error => console.log('error', error));
+
                 getDistance().then(jarak => {
                     // 100 meter = 200 perak
                     // ceil = membulatkan desimal ke yang terdekat
@@ -282,6 +314,8 @@
                     $('#ongkirView').text(formatRupiah(parseInt(ongkirInt)));
                     document.getElementById('ongkir').value = parseInt(ongkir);
 
+                    var marker = L.marker([lat, lng]).addTo(map);
+                    markers.push(marker);
                 });
             });
 
