@@ -87,11 +87,11 @@
                             </dd>
                             <dt class="col-sm-4">Status Pembayaran</dt>
                             <dd class="col-sm-8">
-                                @if ($transaksi->status_pembayaran == 'lunas')
+                                @if ($transaksi->status_pembayaran == 'Success')
                                     <span class="badge bg-success">
                                         <i class="bi bi-check-circle me-2"></i>Lunas
                                     </span>
-                                @elseif ($transaksi->status_pembayaran == 'proses')
+                                @elseif ($transaksi->status_pembayaran == 'Pending')
                                     <span class="badge bg-info">
                                         <i class="bi bi-0-circle me-2"></i>Proses
                                     </span>

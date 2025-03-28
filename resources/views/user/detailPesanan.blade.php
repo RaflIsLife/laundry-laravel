@@ -1,5 +1,41 @@
 @extends('layouts.user')
 
+@push('styles')
+    <style>
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .badge-proses {
+            background: #e3f2fd;
+            color: #2196f3;
+        }
+
+        .badge-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-canceled {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        table th {
+            background-color: var(--secondary-color) !important;
+            color: var(--accent-color);
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -67,11 +103,11 @@
 
                             <dt class="col-sm-4">Status Pembayaran</dt>
                             <dd class="col-sm-8">
-                                @if ($transaksi->status_pembayaran == 'lunas')
+                                @if ($transaksi->status_pembayaran == 'Success' || $transaksi->status_pembayaran == 'Settlement')
                                     <span class="badge bg-success">
                                         <i class="bi bi-check-circle me-2"></i>Lunas
                                     </span>
-                                @elseif ($transaksi->status_pembayaran == 'proses')
+                                @elseif ($transaksi->status_pembayaran == 'Pending')
                                     <span class="badge bg-info">
                                         <i class="bi bi-0-circle me-2"></i>Proses
                                     </span>
@@ -126,38 +162,14 @@
             </div>
         </div>
     </div>
-
-    <style>
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .badge-proses {
-            background: #e3f2fd;
-            color: #2196f3;
-        }
-
-        .badge-completed {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .badge-canceled {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        table th {
-            background-color: var(--secondary-color) !important;
-            color: var(--accent-color);
-        }
-
-        .table tbody tr:hover {
-            background-color: #f8f9fa;
-        }
-    </style>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#dataTables').DataTable();
+        });
+    </script>
+@endpush

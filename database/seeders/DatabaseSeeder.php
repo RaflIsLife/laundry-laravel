@@ -113,7 +113,7 @@ class DatabaseSeeder extends Seeder
             'qty' => 2,
             'status' => 'pengantaran',
             'pembayaran' => 'cod',
-            'status_pembayaran' => 'lunas',
+            'status_pembayaran' => 'Success',
             'courier_id' => 6,
             'ongkir' => 7000
         ]);
@@ -142,7 +142,7 @@ class DatabaseSeeder extends Seeder
             'qty' => 2,
             'status' => 'selesai',
             'pembayaran' => 'cod',
-            'status_pembayaran' => 'lunas',
+            'status_pembayaran' => 'Success',
             'ongkir' => 3000
         ]);
         TransaksiLayanan::create([
@@ -169,7 +169,7 @@ class DatabaseSeeder extends Seeder
             'qty' => 2,
             'status' => 'pengambilan',
             'pembayaran' => 'cod',
-            'status_pembayaran' => 'proses',
+            'status_pembayaran' => 'Pending',
             'courier_id' => 7,
             'ongkir' => 6000
         ]);
@@ -195,9 +195,9 @@ class DatabaseSeeder extends Seeder
             'subtotal' => 80000,
             'total_harga' => 85000,
             'qty' => 2,
-            'status' => 'proses laundry',
+            'status' => 'Proses laundry',
             'pembayaran' => 'qris',
-            'status_pembayaran' => 'lunas',
+            'status_pembayaran' => 'Success',
             'ongkir' => 5000
         ]);
         TransaksiLayanan::create([
@@ -224,7 +224,7 @@ class DatabaseSeeder extends Seeder
             'qty' => 2,
             'status' => 'selesai',
             'pembayaran' => 'qris',
-            'status_pembayaran' => 'lunas',
+            'status_pembayaran' => 'Success',
             'ongkir' => 4000
         ]);
         TransaksiLayanan::create([
@@ -243,9 +243,90 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
+        Transaksi::create([
+            'user_id' => 1,
+            'subtotal' => 80000,
+            'total_harga' => 84000,
+            'qty' => 2,
+            'status' => 'selesai',
+            'pembayaran' => 'qris',
+            'status_pembayaran' => 'Success',
+            'ongkir' => 4000
+        ]);
+        TransaksiLayanan::create([
+            'transaksi_id' => 6,
+            'layanan_id' => 1,
+            'harga' => 20000,
+            'qty' => 2,
+            'type_qty' => 'kg'
+        ]);
+        TransaksiLayanan::create([
+            'transaksi_id' => 6,
+            'layanan_id' => 2,
+            'harga' => 60000,
+            'qty' => 3,
+            'type_qty' => 'pcs'
+        ]);
+
+
+
+        Transaksi::create([
+            'user_id' => 1,
+            'subtotal' => 80000,
+            'total_harga' => 84000,
+            'qty' => 2,
+            'status' => 'selesai',
+            'pembayaran' => 'qris',
+            'status_pembayaran' => 'Success',
+            'ongkir' => 4000
+        ]);
+        TransaksiLayanan::create([
+            'transaksi_id' => 7,
+            'layanan_id' => 1,
+            'harga' => 20000,
+            'qty' => 2,
+            'type_qty' => 'kg'
+        ]);
+        TransaksiLayanan::create([
+            'transaksi_id' => 7,
+            'layanan_id' => 2,
+            'harga' => 60000,
+            'qty' => 3,
+            'type_qty' => 'pcs'
+        ]);
+
+
+
+        Transaksi::create([
+            'user_id' => 1,
+            'subtotal' => 80000,
+            'total_harga' => 84000,
+            'qty' => 2,
+            'status' => 'selesai',
+            'pembayaran' => 'qris',
+            'status_pembayaran' => 'Success',
+            'ongkir' => 4000
+        ]);
+        TransaksiLayanan::create([
+            'transaksi_id' => 8,
+            'layanan_id' => 1,
+            'harga' => 20000,
+            'qty' => 2,
+            'type_qty' => 'kg'
+        ]);
+        TransaksiLayanan::create([
+            'transaksi_id' => 8,
+            'layanan_id' => 2,
+            'harga' => 60000,
+            'qty' => 3,
+            'type_qty' => 'pcs'
+        ]);
+
+
         CompanyProfile::create([
             'nama' => 'QuickWash',
-            'address' => '-6.934967,106.925719',
+            'coordinate' => '-6.934967,106.925719',
+            'address' => 'Jalan Gambang 20, Kecamatan Kota Sukabumi, Jawa Barat 43131 Kota Sukabumi Jawa Barat Indonesia',
         ]);
     }
 }

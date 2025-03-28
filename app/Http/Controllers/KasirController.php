@@ -60,7 +60,7 @@ class KasirController extends Controller
             'ongkir' => 'sometimes',
             'pengantaran' => 'sometimes',
             'pembayaran' => 'required|in:qris,cod',
-            'status_pembayaran' => 'required|in:lunas,proses',
+            'status_pembayaran' => 'required|in:Success,Pending',
             'services' => 'required|array|min:1',
             'services.*.service_id' => 'required|exists:layanans,id',
             'services.*.quantity' => 'required|numeric|min:0.1',

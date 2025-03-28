@@ -12,6 +12,12 @@
             </a>
         </div>
 
+        @if (request('status'))
+            <div> <span style="color: red">{{ request('status') }}</span> </div>
+        @elseif (Session::has('status'))
+            <div> <span style="color: red">{{ Session::get('status') }}</span> </div>
+        @endif
+
         <h4 class="mb-4 fw-bold">Pesanan Aktif</h4>
         <div class="row g-4">
             @foreach ($transaksi as $item)
@@ -41,10 +47,19 @@
                                 <p class="mb-0 fw-bold">{{ $item->qty }}</p>
                             </div>
                         </div>
-                        <div class="text-end">
-                            <a class="btn btn-sm btn-outline-primary" href="{{ route('detailPesanan', $item->id) }}">
-                                Detail <i class="bi bi-arrow-right"></i>
-                            </a>
+                        <div class="row mt-1 justify-content-end">
+                            @if ($item->pembayaran == 'qris' && $item->status_pembayaran == 'Pending')
+                            <div class="col-auto">
+                                <a class="btn btn-sm btn-outline-success" href="{{ route('payMidtransToken', $item->id) }}">
+                                    Bayar <i class="bi bi-cart-check-fill"></i>
+                                </a>
+                            </div>
+                            @endif
+                            <div class="col-auto">
+                                <a class="btn btn-sm btn-outline-primary" href="{{ route('detailPesanan', $item->id) }}">
+                                    Detail <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

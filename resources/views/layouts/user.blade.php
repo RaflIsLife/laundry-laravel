@@ -93,7 +93,9 @@
             align-items: center;
             justify-content: center;
         }
+
     </style>
+    @stack('styles')
 </head>
 
 <body>
@@ -131,12 +133,9 @@
 
     <script src="../../js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
 
-    <script>
-        new DataTable('#dataTables');
-    </script>
+    @stack('scripts')
 </body>
 
 </html>

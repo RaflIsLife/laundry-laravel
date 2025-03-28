@@ -9,9 +9,11 @@ use App\Models\TransaksiLayanan;
 use App\Models\User;
 use Faker\Provider\ar_EG\Company;
 use Hamcrest\Core\AllOf;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Midtrans\Snap;
 
 class UserController extends Controller
 {
@@ -152,7 +154,7 @@ class UserController extends Controller
 
     public function user(Request $request)
     {
-        $transaksi = Transaksi::where('user_id', Auth::id())->whereNotIn('status', ['selesai'])->paginate(10);
+        $transaksi = Transaksi::where('user_id', Auth::id())->whereIn('status_pembayaran', ['Success', 'Pending', 'Settlement'])->whereNotIn('status', ['selesai'])->paginate(10);
         return view('user/home', compact('transaksi'));
     }
     public function detailPesanan(Request $request, Transaksi $transaksi)
@@ -199,6 +201,96 @@ class UserController extends Controller
         }
     }
 
+    public function midtransPayment($transaksi)
+    {
+        $companyProfile = CompanyProfile::first();
+
+        //MIDTRANS IMPLEMENTATION
+        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+        \Midtrans\Config::$isProduction = config('midtrans.isProduction');
+        \Midtrans\Config::$isSanitized = config('midtrans.isSanitized');
+        \Midtrans\Config::$is3ds = config('midtrans.is3ds');
+
+        $transaction_details = array(
+            'order_id' => $transaksi->id,
+            'gross_amount' => $transaksi->total_harga,
+        );
+
+        $item_details = [];
+
+        foreach ($transaksi->layanan as $layanan) {
+            $item_details[] = array(
+                'id' => $layanan->id,
+                'price' => $layanan->pivot->harga,
+                'quantity' => intval($layanan->pivot->qty),
+                'name' => $layanan->nama_layanan
+            );
+        };
+
+        $item_details[] = array(
+            'id' => 0,
+            'price' => $transaksi->ongkir,
+            'quantity' => 1,
+            'name' => "Ongkir",
+        );
+
+        $billing_address = array(
+            'first_name'    => Auth::user()->name,
+            'address'       => Auth::user()->address,
+            'city'          => "Sukabumi",
+            'phone'         => Auth::user()->phone,
+            'country_code'  => 'IDN'
+        );
+
+        // Optional
+        $shipping_address = array(
+            'first_name'    => $companyProfile->name,
+            'address'       => $companyProfile->address,
+            'city'          => "Sukabumi",
+            'phone'         => "0812345678",
+            'country_code'  => 'IDN'
+        );
+
+        $customer_details = array(
+            'first_name'    => Auth::user()->name,
+            'email'         => Auth::user()->email,
+            'phone'         => Auth::user()->phone,
+            'billing_address'  => $billing_address,
+            'shipping_address' => $shipping_address
+        );
+
+        $params = array(
+            'transaction_details' => $transaction_details,
+            'customer_details' => $customer_details,
+            'item_details' => $item_details,
+        );
+
+        return $this->snapToken($transaksi, $params);
+    }
+
+    public function snapToken($transaksi, $params = null)
+    {
+        try {
+            // $paymentUrl = \Midtrans\Snap::createTransaction($params)->redirect_url;
+            if (is_object($transaksi)) {
+                if (empty($params)) {
+                    return redirect()->back()->with('error', 'Parameter pembayaran tidak ditemukan');
+                }
+                $snapToken = Snap::getSnapToken($params);
+                $transaksi->payment_token = $snapToken;
+                $transaksi->save();
+            } else {
+                $transaksi2 = Transaksi::where('id', $transaksi)->first();
+                $snapToken = $transaksi2->payment_token;
+            }
+            // Redirect to Snap Payment Page
+            // header('Location: ' . $paymentUrl);
+            return view('redirect.midtrans', compact('snapToken'));
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+    }
+
     public function postPesanan(Request $request)
     {
         $data = $request->validate([
@@ -210,27 +302,20 @@ class UserController extends Controller
             'ongkir' => 'required',
         ]);
 
-
         $totalHarga = 0;
         $totalJumlah = 0;
-        $statusPembayaran = '';
-
-        if ($data['payment_method'] == 'qris') {
-            $statusPembayaran = 'lunas';
-        } elseif ($data['payment_method'] == 'cod') {
-            $statusPembayaran = 'proses';
-        }
 
         // Buat transaksi baru
         $transaksi = Transaksi::create([
+            'id' => rand(1000, 1000000),
             'user_id' => auth()->id(),
             'total_harga' => 0,
             'qty' => 0,
             'subtotal' => 0,
             'ongkir' => 0,
-            'status' => 'menunggu pengambilan',
+            'status' => 'menunggu pembayaran',
             'pembayaran' => $data['payment_method'],
-            'status_pembayaran' => $statusPembayaran,
+            'status_pembayaran' => 'Pending',
         ]);
         // Loop setiap pesanan layanan
         foreach ($data['services'] as $pesanan) {
@@ -264,14 +349,18 @@ class UserController extends Controller
         // Update total di transaksi
         $transaksi->update([
             'subtotal'    => $subtotal,
-            'ongkir'      => $data['ongkir'],
+            'ongkir'      => intval($data['ongkir']),
             'total_harga' => $totalHarga,
             'qty'         => $totalJumlah,
         ]);
 
-        $this->assignPendingOrders();
-
-        return redirect()->route('user')->with('success', 'Pesanan berhasil dibuat!');
+        if ($data['payment_method'] == 'cod') {
+            $transaksi->update(['status' => 'menunggu pengambilan']);
+            $this->assignPendingOrders();
+            return redirect()->route('user')->with('status', 'Pesanan berhasil dibuat!');
+        } elseif ($data['payment_method'] == 'qris') {
+            return $this->midtransPayment($transaksi);
+        }
     }
 
     public function history(Request $request)

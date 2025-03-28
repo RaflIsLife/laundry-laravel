@@ -128,7 +128,7 @@
                         <div class="col-md-6">
                             <dt class="col-sm-6">Metode Pembayaran</dt>
                             <dd class="col-sm-6">{{ ucwords($transaksi->pembayaran) }}</dd>
-                            @if ($transaksi->pembayaran == 'cod' && $transaksi->status_pembayaran == 'proses')
+                            @if ($transaksi->pembayaran == 'cod' && $transaksi->status_pembayaran == 'Pending')
                                 <form action="{{ route('kurir.mark-paid', $transaksi) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-success">
@@ -141,7 +141,7 @@
                             @endif
                         </div>
                         <div class="col-md-6">
-                            @if ($transaksi->pembayaran == 'cod' && $transaksi->status_pembayaran == 'proses')
+                            @if ($transaksi->pembayaran == 'cod' && $transaksi->status_pembayaran == 'Pending')
                                 <dt class="col-sm-4">Subtotal</dt>
                                 <dd class="col-sm-8">Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }},-</dd>
                             @endif
@@ -190,9 +190,9 @@
         var lngUser = {{ explode(',', $transaksi->user->coordinate)[1] }};
         const addressUser = '{{ $transaksi->user->coordinate }}';
 
-        var latCompany = {{ explode(',', $companyProfile->address)[0] }};
-        var lngCompany = {{ explode(',', $companyProfile->address)[1] }};
-        const addressCompany = '{{ $companyProfile->address }}';
+        var latCompany = {{ explode(',', $companyProfile->coordinate)[0] }};
+        var lngCompany = {{ explode(',', $companyProfile->coordinate)[1] }};
+        const addressCompany = '{{ $companyProfile->coordinate }}';
 
         var gMaps =
             `https://www.google.com/maps/dir/?api=1&origin=${addressCompany}&destination=${addressUser}&travelmode=two-wheeler`

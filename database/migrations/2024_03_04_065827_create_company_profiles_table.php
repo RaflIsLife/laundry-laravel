@@ -17,6 +17,7 @@ class CreateCompanyProfilesTable extends Migration
             $table->id();
             $table->string('nama');
             $table->string('address');
+            $table->string('coordinate');
             $table->timestamps();
         });
     }

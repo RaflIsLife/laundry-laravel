@@ -11,5 +11,6 @@ class CompanyProfile extends Model
     protected $fillable = [
         'nama',
         'address',
+        'coordinate',
     ];
 }

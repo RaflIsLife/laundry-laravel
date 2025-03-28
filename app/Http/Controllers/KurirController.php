@@ -21,10 +21,10 @@ class KurirController extends Controller
 
     public function markPaid(Request $request, Transaksi $transaksi)
     {
-        if ($transaksi->pembayaran === 'cod' && $transaksi->status_pembayaran === 'proses') {
-            $transaksi->status_pembayaran = 'lunas';
+        if ($transaksi->pembayaran === 'cod' && $transaksi->status_pembayaran === 'Pending') {
+            $transaksi->status_pembayaran = 'Success';
             $transaksi->save();
-            return redirect()->back()->with('status', 'Status pembayaran telah diubah menjadi lunas.');
+            return redirect()->back()->with('status', 'Status pembayaran telah diubah menjadi Success.');
         }
         return redirect()->back()->with('status', 'Gagal mengubah status pembayaran.');
     }
@@ -32,7 +32,7 @@ class KurirController extends Controller
     public function completeOrder(Request $request, Transaksi $transaksi)
     {
         if ($transaksi->courier_id !== auth()->id()) abort(403);
-        if ($transaksi->pembayaran === 'cod' && $transaksi->status_pembayaran === 'proses') {
+        if ($transaksi->pembayaran === 'cod' && $transaksi->status_pembayaran === 'Pending') {
             return redirect()->back()->with('status', 'Tolong konfirmasi pembayaran cod terlebih dahulu.');
         }
 

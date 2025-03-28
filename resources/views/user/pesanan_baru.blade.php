@@ -54,11 +54,11 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <button type="button" class="btn btn-secondary btn-sm" id="tambah-item">
                             <i class="bi bi-plus-lg me-2"></i>Tambah Pesanan
                         </button>
-                        
+
                         <div class="row mt-3">
                             <input class="form-control" name="ongkir" type="hidden" id="ongkir" value="0">
                             <div class="col text-end">
@@ -79,7 +79,7 @@
                                     <input class="form-check-input" type="radio" name="payment_method" id="qris"
                                         value="qris" required>
                                     <label class="form-check-label" for="qris">
-                                        <i class="bi bi-qr-code me-2"></i> QRIS
+                                        <i class="bi bi-qr-code me-2"></i> Bayar sekarang (Online)
                                     </label>
                                 </div>
                             </div>
@@ -88,7 +88,7 @@
                                     <input class="form-check-input" type="radio" name="payment_method" id="cod"
                                         value="cod">
                                     <label class="form-check-label" for="cod">
-                                        <i class="bi bi-cash-coin me-2"></i> Bayar di Tempat (COD)
+                                        <i class="bi bi-cash-coin me-2"></i> Bayar di Kurir (COD)
                                     </label>
                                 </div>
                             </div>
@@ -96,21 +96,24 @@
                     </div>
                 </div>
 
-                <div class="text-end">
-                    <button type="submit" class="btn btn-primary px-5">
+                <div class="text-end" id="submitPlacement">
+                    <button type="submit" class="btn btn-primary px-5" id="submit">
                         <i class="bi bi-check2-circle me-2"></i>Buat Pesanan
                     </button>
                 </div>
             </form>
         </div>
     </div>
+@endsection
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@push('scripts')
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
     <script>
         $(document).ready(function() {
 
+            
             const addressUser = '{{ Auth::user()->coordinate }}';
-            const addressCompany = '{{ $companyProfile->address }}';
+            const addressCompany = '{{ $companyProfile->coordinate }}';
 
             var jarak = 0;
 
@@ -240,4 +243,4 @@
             });
         });
     </script>
-@endsection
+@endpush

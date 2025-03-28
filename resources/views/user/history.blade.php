@@ -1,5 +1,45 @@
 @extends('layouts.user')
 
+@push('styles')
+<style>
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .badge-completed {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .badge-progress {
+        background: #fff3e0;
+        color: #ef6c00;
+    }
+
+    .badge-canceled {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .order-item {
+        transition: all 0.3s ease;
+    }
+
+    .order-item:hover {
+        transform: translateX(5px);
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+</style>
+@endpush
+
 @section('content')
     <div class="container-fluid p-0">
         <div class="main-content">
@@ -54,43 +94,4 @@
             </div>
         </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .badge-completed {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .badge-progress {
-            background: #fff3e0;
-            color: #ef6c00;
-        }
-
-        .badge-canceled {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        .order-item {
-            transition: all 0.3s ease;
-        }
-
-        .order-item:hover {
-            transform: translateX(5px);
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-    </style>
 @endsection

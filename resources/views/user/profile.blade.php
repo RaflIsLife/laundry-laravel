@@ -1,5 +1,35 @@
 @extends('layouts.user')
 
+@push('styles')
+    <style>
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            border-radius: 50%;
+            padding: 8px;
+            width: 36px;
+            height: 36px;
+        }
+
+        .form-control:disabled {
+            background-color: #f8f9fa;
+            opacity: 1;
+        }
+
+        .input-group-text {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: var(--accent-color);
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="container-fluid p-0">
         <div class="main-content">
@@ -58,35 +88,9 @@
             </div>
         </div>
     </div>
+@endsection
 
-    <style>
-        .avatar-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-
-        .avatar-upload {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            border-radius: 50%;
-            padding: 8px;
-            width: 36px;
-            height: 36px;
-        }
-
-        .form-control:disabled {
-            background-color: #f8f9fa;
-            opacity: 1;
-        }
-
-        .input-group-text {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-            color: var(--accent-color);
-        }
-    </style>
-
+@push('scripts')
     <script>
         var lat = {{ explode(',', Auth::user()->coordinate)[0] }};
         var lng = {{ explode(',', Auth::user()->coordinate)[1] }};
@@ -105,6 +109,7 @@
         }).addTo(map)
 
         const myAPIKey = '{{ env('GEOAPIFY_API_KEY') }}';
+
         function address(newLat, newLng) {
             const reverseGeocodeUrl =
                 `https://api.geoapify.com/v1/geocode/reverse?lat=${newLat}&lon=${newLng}&type=amenity&lang=id&format=json&apiKey=${myAPIKey}`;
@@ -139,4 +144,4 @@
             document.getElementById('longitude').value = newLng;
         });
     </script>
-@endsection
+@endpush

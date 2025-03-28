@@ -20,6 +20,15 @@ Route::get('/login', 'UserController@login')->name('login');
 Route::post("/postLogin", 'UserController@postLogin')->name('postLogin');
 Route::post("/postRegister", 'UserController@postRegister')->name('postRegister');
 
+//midtrans
+Route::get("/payToken/{transaksi}", 'UserController@snapToken')->name('payMidtransToken');
+Route::post('/midtrans/notification', 'MidtransNotificationController@notificationHandler')->name('midtrans.notification');
+Route::get('/assign-pending-orders-redirect', function () {
+    $userController = new \App\Http\Controllers\UserController();
+    $userController->assignPendingOrders();
+    return redirect()->route('user')->with('status', 'Pembayaran berhasil!');
+})->name('assign.pending.orders.redirect');
+
 Route::middleware('auth')->group(function () {
     Route::middleware('check:admin')->group(function () {
         Route::get('/admin', 'AdminController@admin')->name('admin.home');

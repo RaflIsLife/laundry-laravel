@@ -149,8 +149,8 @@
                                 <div class="mb-3">
                                     <label class="form-label">Status Pembayaran</label>
                                     <select class="form-select" name="status_pembayaran">
-                                        <option value="lunas">Lunas</option>
-                                        <option value="proses">Belum Dibayar</option>
+                                        <option value="Success">Lunas</option>
+                                        <option value="Pending">Belum Dibayar</option>
                                     </select>
                                 </div>
                             </div>
@@ -166,7 +166,6 @@
             </form>
         </div>
     </div>
-    {{-- todo: buat auto complete untuk coordinate pada map --}}
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <!-- jQuery UI JS -->
@@ -191,15 +190,11 @@
 
             var markers = [];
 
-            // Fungsi untuk update marker di map berdasarkan coordinate baru
             function updateMapMarker(lat, lng) {
-                // Hapus marker yang ada
                 markers.forEach(marker => map.removeLayer(marker));
                 markers = [];
-                // Tambahkan marker baru
                 var newMarker = L.marker([lat, lng]).addTo(map);
                 markers.push(newMarker);
-                // Pindahkan tampilan map ke lokasi marker baru
                 map.setView([lat, lng], 17);
             }
 
@@ -267,7 +262,7 @@
                 var lat = e.latlng.lat;
                 var lng = e.latlng.lng;
                 const addressUser = `${lat},${lng}`;
-                const addressCompany = '{{ $companyProfile->address }}';
+                const addressCompany = '{{ $companyProfile->coordinate }}';
 
                 markers.forEach(marker => map.removeLayer(marker));
                 markers = [];
