@@ -19,7 +19,7 @@ class Transaksi extends Model
     public function layanan()
     {
         return $this->belongsToMany(Layanan::class, 'transaksi_layanans')
-            ->withPivot('qty', 'harga')
+            ->withPivot('qty', 'harga', 'type_qty')
             ->withTimestamps();
     }
 }

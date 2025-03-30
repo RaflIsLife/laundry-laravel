@@ -40,7 +40,7 @@ class KasirController extends Controller
                 'name'  => $row->name,
                 'phone'  => $row->phone,
                 'coordinate'  => $row->coordinate,
-                // 'label' akan tampil pada dropdown (gabungan nama dan nohp)
+                // 'label' akan tampil pada dropdown (gabungan nama dan nomor hp)
                 'label' => $row->name . ' - ' . $row->phone . ' - ' . $row->coordinate,
                 // 'value' bisa disesuaikan, misalnya mengisi input nama
                 'value' => $row->name,
@@ -60,7 +60,6 @@ class KasirController extends Controller
             'ongkir' => 'sometimes',
             'pengantaran' => 'sometimes',
             'pembayaran' => 'required|in:qris,cod',
-            'status_pembayaran' => 'required|in:Success,Pending',
             'services' => 'required|array|min:1',
             'services.*.service_id' => 'required|exists:layanans,id',
             'services.*.quantity' => 'required|numeric|min:0.1',
@@ -92,12 +91,13 @@ class KasirController extends Controller
             'ongkir' => 0,
             'total_harga' => $totalHarga,
             'qty' => count($data['services']),
-            'status' => 'antrian laundry',
+            'status' => 'menunggu pembayaran',
             'pembayaran' => $data['pembayaran'],
-            'status_pembayaran' => $data['status_pembayaran'],
+            'status_pembayaran' => 'Pending',
             'cara_pemesanan' => 'offline',
             'pengantaran' => 'tidak',
         ]);
+
         if ($request->has('pengantaran')) {
             $user->update([
                 'coordinate' => $data['latitude'] . ',' . $data['longitude'],
@@ -112,24 +112,46 @@ class KasirController extends Controller
 
         // Simpan layanan
         foreach ($data['services'] as $service) {
-            TransaksiLayanan::create([
-                'transaksi_id' => $transaksi->id,
-                'layanan_id' => $service['service_id'],
+            $layanan = Layanan::find($service['service_id']);
+
+            $transaksi->layanan()->attach($layanan->id, [
+                'qty'   => $service['quantity'],
                 'type_qty' => $service['unit'],
-                'qty' => $service['quantity'],
                 'harga' => ($service['unit'] === 'pcs'
                     ? Layanan::find($service['service_id'])->harga_pcs
-                    : Layanan::find($service['service_id'])->harga_kg) * $service['quantity']
+                    : Layanan::find($service['service_id'])->harga_kg) * $service['quantity'],
             ]);
         }
 
-        return redirect()->route('kasir')->with('status', 'Transaksi berhasil disimpan!');
+        $userController = new UserController();
+        if ($data['pembayaran'] == 'cod') {
+            $transaksi->update([
+                'status' => 'antrian laundry',
+                'status_pembayaran' => 'Success',
+            ]);
+            return redirect()->route('kasir')->with('status', 'Pesanan berhasil dibuat!');
+        } elseif ($data['pembayaran'] == 'qris') {
+            $snapToken = $userController->midtransPayment($transaksi);
+            return response()->json(['snapToken' => $snapToken]);
+        }
     }
 
-
+    //todo: ke chatcgt, ubah urutannya menjadi diurut berdasarkan status pemesanan(dari menunggu pengantaran kebawah),jika ada duplikat duplikat tersebut diurutkan berdasarkan waktu
+    //todo: history belum di perbaiki query databasenya
+    //todo: kurir, adakan untuk stop pengantaran/pengambilan. terjadi disaat kurir sudah menyelesaikan satu pesanan, ada kolom untuk lanjut/tidak
     public function transaksi()
     {
-        $transaksi = Transaksi::whereNotIn('status', ['selesai'])->with('user')->oldest('created_at')->get();
+        $transaksi = Transaksi::whereNotIn('status', ['selesai'])
+            ->where(function ($query) {
+                $query->whereIn('status_pembayaran', ['Success', 'Settlement'])
+                    ->orWhere(function ($subQuery) {
+                        $subQuery->where('cara_pemesanan', 'online')
+                            ->where('status_pembayaran', 'Pending');
+                    });
+            })
+            ->with('user')
+            ->oldest('created_at')
+            ->get();
         return view('kasir/transaksi', compact('transaksi'));
     }
     public function history()

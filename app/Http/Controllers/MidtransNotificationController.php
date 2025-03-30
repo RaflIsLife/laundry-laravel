@@ -40,11 +40,12 @@ class MidtransNotificationController extends Controller
                 }
             }
         } else if ($transactionStatus == 'settlement') {
-            // todo: update status order ke settlement jika sistem pembayaran ada pada tahap produksi
             $transaksi->status_pembayaran = 'Success';
-            $userController = new UserController();
-            $userController->assignPendingOrders();
-            $transaksi->status = 'menunggu pengambilan';
+            if($transaksi->cara_pemesanan == 'offline'){
+                $transaksi->status = 'antrian laundry';
+            } else {
+                $transaksi->status = 'menunggu pengambilan';
+            }
             echo "transactionStatus order_id: " . $order_id ." successfully transfered using " . $type;
         } else if ($transactionStatus == 'pending') {
             $transaksi->status_pembayaran = 'Pending';

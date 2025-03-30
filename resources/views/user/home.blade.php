@@ -49,11 +49,12 @@
                         </div>
                         <div class="row mt-1 justify-content-end">
                             @if ($item->pembayaran == 'qris' && $item->status_pembayaran == 'Pending')
-                            <div class="col-auto">
-                                <a class="btn btn-sm btn-outline-success" href="{{ route('payMidtransToken', $item->id) }}">
-                                    Bayar <i class="bi bi-cart-check-fill"></i>
-                                </a>
-                            </div>
+                                <div class="col-auto">
+                                    <a class="btn btn-sm btn-outline-success"
+                                        href="{{ route('payMidtransToken', $item->id) }}">
+                                        Bayar <i class="bi bi-cart-check-fill"></i>
+                                    </a>
+                                </div>
                             @endif
                             <div class="col-auto">
                                 <a class="btn btn-sm btn-outline-primary" href="{{ route('detailPesanan', $item->id) }}">
@@ -70,3 +71,44 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('.btn-outline-success').on('click', function(e) {
+                e.preventDefault(); // Mencegah redirect
+                var transaksiId = $(this).attr('href').split('/').pop(); // Ambil ID transaksi dari href
+
+                $.ajax({
+                    url: '{{ url('/payToken') }}/' + transaksiId, // Bangun URL dengan transaksiId
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.snapToken) {
+                            snap.pay(response.snapToken, {
+                                onSuccess: function(result) {
+                                    window.location.href =
+                                        "{{ route('assign.pending.orders.redirect') }}";
+                                },
+                                onPending: function(result) {
+                                    window.location.href =
+                                        "{{ route('user') }}?status=Pembayaran+gagal!";
+                                },
+                                onError: function(result) {
+                                    window.location.href =
+                                        "{{ route('user') }}?status=Pembayaran+gagal!";
+                                },
+                                onClose: function() {
+                                    console.log(
+                                        'Pop-up ditutup, tetap di halaman home');
+                                }
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Terjadi kesalahan: ' + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+@endpush

@@ -203,6 +203,10 @@ class UserController extends Controller
 
     public function midtransPayment($transaksi)
     {
+        if ($transaksi->payment_token) {
+            return $this->snapToken($transaksi->id);
+        }
+
         $companyProfile = CompanyProfile::first();
 
         //MIDTRANS IMPLEMENTATION
@@ -219,32 +223,34 @@ class UserController extends Controller
         $item_details = [];
 
         foreach ($transaksi->layanan as $layanan) {
-            $item_details[] = array(
+            $item_details[] = [
                 'id' => $layanan->id,
-                'price' => $layanan->pivot->harga,
+                'price' => $layanan->pivot->type_qty == 'kg' ? $layanan->harga_kg : $layanan->harga_pcs,
                 'quantity' => intval($layanan->pivot->qty),
-                'name' => $layanan->nama_layanan
-            );
+                'name' => $layanan->nama_layanan . " (" . $layanan->pivot->type_qty . ")",
+            ];
         };
 
-        $item_details[] = array(
+        $item_details[] = [
             'id' => 0,
             'price' => $transaksi->ongkir,
             'quantity' => 1,
             'name' => "Ongkir",
-        );
+        ];
+
+        $user = User::find($transaksi->user_id);
 
         $billing_address = array(
-            'first_name'    => Auth::user()->name,
-            'address'       => Auth::user()->address,
+            'first_name'    => $user->name,
+            'address'       => $user->address,
             'city'          => "Sukabumi",
-            'phone'         => Auth::user()->phone,
+            'phone'         => $user->phone,
             'country_code'  => 'IDN'
         );
 
         // Optional
         $shipping_address = array(
-            'first_name'    => $companyProfile->name,
+            'first_name'    => $companyProfile->nama,
             'address'       => $companyProfile->address,
             'city'          => "Sukabumi",
             'phone'         => "0812345678",
@@ -252,9 +258,9 @@ class UserController extends Controller
         );
 
         $customer_details = array(
-            'first_name'    => Auth::user()->name,
-            'email'         => Auth::user()->email,
-            'phone'         => Auth::user()->phone,
+            'first_name'    => $user->name,
+            'email'         => $user->email,
+            'phone'         => $user->phone,
             'billing_address'  => $billing_address,
             'shipping_address' => $shipping_address
         );
@@ -265,30 +271,92 @@ class UserController extends Controller
             'item_details' => $item_details,
         );
 
-        return $this->snapToken($transaksi, $params);
+        $snapToken = \Midtrans\Snap::getSnapToken($params);
+        $transaksi->payment_token = $snapToken;
+        $transaksi->save();
+
+        return $snapToken;
     }
 
-    public function snapToken($transaksi, $params = null)
+    // public function snapToken($transaksi)
+    // {
+    //     try {
+    //         $transaksi2 = Transaksi::where('id', $transaksi)->first();
+    //         return response()->json(['snapToken' => $transaksi2->payment_token]);
+    //     } catch (Exception $e) {
+    //         echo $e->getMessage();
+    //     }
+    // }
+
+    public function snapToken($transaksiId)
     {
-        try {
-            // $paymentUrl = \Midtrans\Snap::createTransaction($params)->redirect_url;
-            if (is_object($transaksi)) {
-                if (empty($params)) {
-                    return redirect()->back()->with('error', 'Parameter pembayaran tidak ditemukan');
-                }
-                $snapToken = Snap::getSnapToken($params);
-                $transaksi->payment_token = $snapToken;
-                $transaksi->save();
-            } else {
-                $transaksi2 = Transaksi::where('id', $transaksi)->first();
-                $snapToken = $transaksi2->payment_token;
-            }
-            // Redirect to Snap Payment Page
-            // header('Location: ' . $paymentUrl);
-            return view('redirect.midtrans', compact('snapToken'));
-        } catch (Exception $e) {
-            echo $e->getMessage();
+        $transaksi = Transaksi::findOrFail($transaksiId);
+
+        if ($transaksi->payment_token) {
+            return response()->json(['snapToken' => $transaksi->payment_token]);
         }
+
+        // Generate snapToken baru jika belum ada
+        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+        \Midtrans\Config::$isProduction = config('midtrans.isProduction');
+        \Midtrans\Config::$isSanitized = config('midtrans.isSanitized');
+        \Midtrans\Config::$is3ds = config('midtrans.is3ds');
+
+        $companyProfile = CompanyProfile::first();
+        $user = User::find($transaksi->user_id);
+
+        $transaction_details = [
+            'order_id' => $transaksi->id,
+            'gross_amount' => $transaksi->total_harga,
+        ];
+
+        $item_details = [];
+        foreach ($transaksi->layanan as $layanan) {
+            $item_details[] = [
+                'id' => $layanan->id,
+                'price' => $layanan->pivot->type_qty == 'kg' ? $layanan->harga_kg : $layanan->harga_pcs,
+                'quantity' => intval($layanan->pivot->qty),
+                'name' => $layanan->nama_layanan . " (" . $layanan->pivot->type_qty . ")",
+            ];
+        }
+        $item_details[] = [
+            'id' => 0,
+            'price' => $transaksi->ongkir,
+            'quantity' => 1,
+            'name' => "Ongkir",
+        ];
+
+        $customer_details = [
+            'first_name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'billing_address' => [
+                'first_name' => $user->name,
+                'address' => $user->address,
+                'city' => "Sukabumi",
+                'phone' => $user->phone,
+                'country_code' => 'IDN',
+            ],
+            'shipping_address' => [
+                'first_name' => $companyProfile->nama,
+                'address' => $companyProfile->address,
+                'city' => "Sukabumi",
+                'phone' => "0812345678",
+                'country_code' => 'IDN',
+            ],
+        ];
+
+        $params = [
+            'transaction_details' => $transaction_details,
+            'customer_details' => $customer_details,
+            'item_details' => $item_details,
+        ];
+
+        $snapToken = \Midtrans\Snap::getSnapToken($params);
+        $transaksi->payment_token = $snapToken;
+        $transaksi->save();
+
+        return response()->json(['snapToken' => $snapToken]);
     }
 
     public function postPesanan(Request $request)
@@ -340,7 +408,7 @@ class UserController extends Controller
             // Simpan detail ke pivot table (transaksi_layanan)
             $transaksi->layanan()->attach($layanan->id, [
                 'qty'   => $jumlah,
-                'type_qty'   => $type,
+                'type_qty' => $type,
                 'harga' => $harga,
             ]);
         }
@@ -357,9 +425,10 @@ class UserController extends Controller
         if ($data['payment_method'] == 'cod') {
             $transaksi->update(['status' => 'menunggu pengambilan']);
             $this->assignPendingOrders();
-            return redirect()->route('user')->with('status', 'Pesanan berhasil dibuat!');
+            return response()->json(['redirect' => route('user')]);
         } elseif ($data['payment_method'] == 'qris') {
-            return $this->midtransPayment($transaksi);
+            $snapToken = $this->midtransPayment($transaksi);
+            return response()->json(['snapToken' => $snapToken]);
         }
     }
 

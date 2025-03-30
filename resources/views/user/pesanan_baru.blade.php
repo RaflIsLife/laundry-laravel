@@ -111,7 +111,7 @@
     <script>
         $(document).ready(function() {
 
-            
+
             const addressUser = '{{ Auth::user()->coordinate }}';
             const addressCompany = '{{ $companyProfile->coordinate }}';
 
@@ -240,6 +240,48 @@
             // Jika quantity berubah
             $(document).on('input', '.quantity', function() {
                 updatePrices();
+            });
+
+            // Handle form submit
+            $('form').on('submit', function(e) {
+                e.preventDefault(); // Mencegah submit tradisional
+                var formData = $(this).serialize(); // Ambil data form
+
+                $.ajax({
+                    url: '{{ route('pesananBaru.post') }}', // Endpoint controller
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.snapToken) {
+                            // Jika ada snapToken (pembayaran qris), tampilkan Snap pop-up
+                            snap.pay(response.snapToken, {
+                                onSuccess: function(result) {
+                                    window.location.href =
+                                        "{{ route('assign.pending.orders.redirect') }}";
+                                },
+                                onPending: function(result) {
+                                    window.location.href =
+                                        "{{ route('user') }}?status=Pembayaran+gagal!";
+                                },
+                                onError: function(result) {
+                                    window.location.href =
+                                        "{{ route('user') }}?status=Pembayaran+gagal!";
+                                },
+                                onClose: function(result) {
+                                    window.location.href =
+                                        "{{ route('user') }}?status=Pembayaran+dibatalkan!";
+                                }
+                            });
+                        } else if (response.redirect) {
+                            // Jika COD, redirect ke URL yang diberikan
+                            window.location.href = response.redirect;
+                        }
+                    },
+                    error: function(xhr) {
+                        // Tangani error
+                        alert('Terjadi kesalahan: ' + xhr.responseText);
+                    }
+                });
             });
         });
     </script>

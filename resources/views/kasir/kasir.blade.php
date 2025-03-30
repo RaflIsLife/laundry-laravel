@@ -145,15 +145,6 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Status Pembayaran</label>
-                                    <select class="form-select" name="status_pembayaran">
-                                        <option value="Success">Lunas</option>
-                                        <option value="Pending">Belum Dibayar</option>
-                                    </select>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -167,6 +158,7 @@
         </div>
     </div>
     <!-- jQuery -->
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.clientKey') }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <!-- jQuery UI JS -->
     <script src="../../../js/bootstrap.bundle.min.js"></script>
@@ -372,6 +364,47 @@
                     input.attr('step', step).attr('min', step);
                 }
                 updatePrices();
+            });
+
+            $('form').on('submit', function(e) {
+                e.preventDefault(); // Mencegah submit tradisional
+                var formData = $(this).serialize(); // Ambil data form
+
+                $.ajax({
+                    url: '{{ route('postKasir') }}', // Endpoint controller
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.snapToken) {
+                            // Jika ada snapToken (pembayaran qris), tampilkan Snap pop-up
+                            snap.pay(response.snapToken, {
+                                onSuccess: function(result) {
+                                    window.location.href =
+                                        "{{ route('kasir') }}?status=Pembayaran+berhasil!";
+                                },
+                                onPending: function(result) {
+                                    window.location.href =
+                                        "{{ route('kasir') }}?status=Pembayaran+gagal!";
+                                },
+                                onError: function(result) {
+                                    window.location.href =
+                                        "{{ route('kasir') }}?status=Pembayaran+gagal!";
+                                },
+                                onClose: function(result) {
+                                    window.location.href =
+                                        "{{ route('kasir') }}?status=Pembayaran+dibatalkan!";
+                                }
+                            });
+                        } else if (response.redirect) {
+                            // Jika COD, redirect ke URL yang diberikan
+                            window.location.href = response.redirect;
+                        }
+                    },
+                    error: function(xhr) {
+                        // Tangani error
+                        alert('Terjadi kesalahan: ' + xhr.responseText);
+                    }
+                });
             });
         });
     </script>
