@@ -42,7 +42,7 @@ class MidtransNotificationController extends Controller
         } else if ($transactionStatus == 'settlement') {
             $transaksi->status_pembayaran = 'Success';
             if($transaksi->cara_pemesanan == 'offline'){
-                $transaksi->status = 'antrian laundry';
+                $transaksi->update(['status' => 'antrian laundry']);
                 $kasirController = new KasirController();
                 $kasirController->antrianLaundrySwitch();
             } else {

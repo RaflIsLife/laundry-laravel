@@ -136,9 +136,6 @@ class KasirController extends Controller
         }
     }
 
-    //todo: ke chatcgt, ubah urutannya menjadi diurut berdasarkan status pemesanan(dari menunggu pengantaran kebawah),jika ada duplikat duplikat tersebut diurutkan berdasarkan waktu
-    //todo: history belum di perbaiki query databasenya
-    //todo: kurir, adakan untuk stop pengantaran/pengambilan. terjadi disaat kurir sudah menyelesaikan satu pesanan, ada kolom untuk lanjut/tidak
     public function transaksi()
     {
         $transaksi = Transaksi::whereNotIn('status', ['selesai'])

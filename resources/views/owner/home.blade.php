@@ -71,31 +71,36 @@
                     </table>
                 </div>
             </div>
+            <div class="container mt-5">
+                <h1 class="text-center mb-4">Perbandingan Transaksi Offline dan Online</h1>
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <canvas id="myChart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Data untuk grafik pemasukan bulanan
-        var pemasukanData = @json($grafikPemasukan); // Pastikan ini adalah array data yang diterima dari controller
+        var pemasukanData = @json($grafikPemasukan); 
 
-        // Ambil bulan dan total pemasukan
-        var bulan = pemasukanData.map(function(item) {
-            return item.bulan;
+        var hari = pemasukanData.map(function(item) {
+            return item.hari;
         });
         var totalPemasukan = pemasukanData.map(function(item) {
             return item.total_harga;
         });
 
-        // Buat chart
-        var ctx = document.getElementById('pemasukanChart').getContext('2d');
-        var pemasukanChart = new Chart(ctx, {
-            type: 'line', // Jenis grafik: line chart
+        var ctx1 = document.getElementById('pemasukanChart').getContext('2d');
+        var pemasukanChart = new Chart(ctx1, {
+            type: 'line',
             data: {
-                labels: bulan,
+                labels: hari,
                 datasets: [{
-                    label: 'Pemasukan Bulanan',
+                    label: 'Pemasukan Harian',
                     data: totalPemasukan,
                     borderColor: 'rgba(75, 192, 192, 1)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -106,6 +111,39 @@
                 scales: {
                     y: {
                         beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: @json($labelsCaraPemesanan),
+                datasets: [{
+                    label: 'Jumlah Transaksi',
+                    data: @json($valuesCaraPemesanan),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)', // Warna offline
+                        'rgba(54, 162, 235, 0.2)'  // Warna online
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Perbandingan Transaksi'
                     }
                 }
             }

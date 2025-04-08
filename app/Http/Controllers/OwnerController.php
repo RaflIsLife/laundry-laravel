@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaksi;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OwnerController extends Controller
 {
@@ -12,16 +13,25 @@ class OwnerController extends Controller
     {
         $transaksi = Transaksi::all();
 
-        // Mengambil data pelanggan dengan role 'customer'
         $user = User::where('role', 'customer')->get();
 
-        // Mengambil total pemasukan per bulan untuk grafik
-        $grafikPemasukan = Transaksi::selectRaw('MONTH(created_at) as bulan, SUM(total_harga) as total_harga')
-            ->groupBy('bulan')
-            ->orderBy('bulan', 'asc')
+        $grafikPemasukan = Transaksi::whereIn('status_pembayaran', ['Success', 'Settlement'])
+            ->select([
+                DB::raw('DAY(created_at) as hari'),
+                DB::raw('SUM(total_harga) as total_harga')
+            ])
+            ->groupBy(DB::raw('DAY(created_at)'))
+            ->orderBy(DB::raw('DAY(created_at)'), 'asc')
             ->get();
 
-        // Mengirim data ke view
-        return view('owner.home', compact('transaksi', 'user', 'grafikPemasukan'));
+        $grafikCaraPemesanan = Transaksi::whereIn('status_pembayaran', ['Success', 'Settlement'])
+            ->select('cara_pemesanan', DB::raw('count(*) as total'))
+            ->groupBy('cara_pemesanan')
+            ->get();
+
+        $labelsCaraPemesanan = $grafikCaraPemesanan->pluck('cara_pemesanan');
+        $valuesCaraPemesanan = $grafikCaraPemesanan->pluck('total');
+
+        return view('owner.home', compact('transaksi', 'user', 'grafikPemasukan', 'labelsCaraPemesanan', 'valuesCaraPemesanan'));
     }
 }

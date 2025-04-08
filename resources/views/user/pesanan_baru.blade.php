@@ -137,7 +137,6 @@
 
             getDistance().then(jarak => {
                 // 100 meter = 200 perak
-                // ceil = membulatkan desimalk yang terdekat
                 var ongkir = Math.ceil(jarak / 100) * 200 * 2;
 
                 document.getElementById('ongkir').value = parseInt(ongkir);
@@ -149,7 +148,7 @@
                 return 'Rp ' + angka.toLocaleString('id-ID');
             }
 
-            // Fungsi untuk menghitung subtotal tiap item dan total keseluruhan
+            // hitung subtotal tiap item dan total keseluruhan
             function updatePrices() {
                 let total = 0;
                 let totalHargaLayanan = 0;
@@ -159,24 +158,17 @@
                         quantity = 0;
                     }
 
-                    // Ambil unit (pcs atau kg)
                     let unit = $(this).find('.pilih-satuan').val();
 
-                    // Ambil data harga dari option yg dipilih
                     let serviceSelected = $(this).find('.jenis-layanan option:selected');
                     let hargaPcs = parseFloat(serviceSelected.data('harga-pcs')) || 0;
                     let hargaKg = parseFloat(serviceSelected.data('harga-kg')) || 0;
 
-                    // Pilih harga sesuai unit
                     let harga = (unit === 'pcs') ? hargaPcs : hargaKg;
-
-                    // Hitung subtotal
                     let subtotal = quantity * harga;
 
-                    // Tampilkan di input akumulasi-harga
                     $(this).find('.akumulasi-harga').val(formatRupiah(subtotal));
 
-                    // Tambahkan ke total
                     total += subtotal;
                 });
                 totalHargaLayanan = total;
@@ -187,11 +179,9 @@
                 $('#total-keseluruhan').text(formatRupiah(total));
             }
 
-            // Saat tombol "Tambah Pesanan" diklik
             $('#tambah-item').click(function() {
                 const itemBaru = $('.item-pesanan:first').clone();
 
-                // Ganti name index [0] -> [nomorItem]
                 $(itemBaru).find('input, select').each(function() {
                     if ($(this).attr('name')) {
                         const namaLama = $(this).attr('name');
@@ -200,20 +190,16 @@
                     }
                 });
 
-                // Tampilkan tombol hapus
                 $(itemBaru).find('.hapus-item').show();
 
-                // Reset akumulasi harga jadi Rp 0
                 $(itemBaru).find('.akumulasi-harga').val('Rp 0');
 
-                // Masukkan item pesanan baru ke container
                 $('#daftar-pesanan').append(itemBaru);
 
                 nomorItem++;
                 updatePrices();
             });
 
-            // Hapus item pesanan
             $(document).on('click', '.hapus-item', function() {
                 if ($('.item-pesanan').length > 1) {
                     $(this).closest('.item-pesanan').remove();
@@ -221,7 +207,6 @@
                 }
             });
 
-            // Jika unit pcs/kg berubah, atur step & min, lalu update harga
             $(document).on('change', '.pilih-satuan', function() {
                 let inputJumlah = $(this).closest('.item-pesanan').find('.quantity');
                 if ($(this).val() === 'pcs') {
@@ -232,17 +217,14 @@
                 updatePrices();
             });
 
-            // Jika jenis layanan berubah, tetap panggil updatePrices
             $(document).on('change', '.jenis-layanan', function() {
                 updatePrices();
             });
 
-            // Jika quantity berubah
             $(document).on('input', '.quantity', function() {
                 updatePrices();
             });
 
-            // Handle form submit
             $('form').on('submit', function(e) {
                 e.preventDefault(); // Mencegah submit tradisional
                 var formData = $(this).serialize(); // Ambil data form

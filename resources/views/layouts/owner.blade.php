@@ -114,12 +114,6 @@
                 <a class="nav-link" href="{{ route('owner') }}">
                     <i class="bi bi-house-door me-3"></i> Dashboard
                 </a>
-                <a class="nav-link" href="{{ route('owner') }}">
-                    <i class="bi bi-person me-3"></i> Customers
-                </a>
-                <a class="nav-link" href="{{ route('owner') }}">
-                    <i class="bi bi-file-earmark-text me-3"></i> Reports
-                </a>
                 <hr>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
