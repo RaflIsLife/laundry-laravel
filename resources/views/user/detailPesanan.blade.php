@@ -81,12 +81,12 @@
                             <dt class="col-sm-4">Total Ongkir</dt>
                             <dd class="col-sm-8 fw-bold">Rp {{ number_format($transaksi->ongkir, 0, ',', '.') }}</dd>
 
-                            <dt class="col-sm-4">Total Keseluruhan</dt>
-                            <dd class="col-sm-8 fw-bold">
-                                <span class="badge bg-primary fs-5" style="height: 40px; width: 140px;"> Rp
-                                    {{ number_format($transaksi->total_harga, 0, ',', '.') }}
-                                </span>
-                            </dd>
+                            @if ($transaksi->promo != null)
+                                <dt class="col-sm-4">Diskon</dt>
+                                <dd class="col-sm-8 fw-bold">
+                                    Rp {{ number_format($transaksi->promo, 0, ',', '.') }}-
+                                </dd>
+                            @endif
                         </dl>
                     </div>
 
@@ -112,6 +112,13 @@
                                         <i class="bi bi-0-circle me-2"></i>Proses
                                     </span>
                                 @endif
+                            </dd>
+
+                            <dt class="col-sm-4">Total Keseluruhan</dt>
+                            <dd class="col-sm-8 fw-bold">
+                                <span class="badge bg-primary fs-5" style="height: 40px; width: 140px;"> Rp
+                                    {{ number_format($transaksi->total_harga, 0, ',', '.') }}
+                                </span>
                             </dd>
                         </dl>
                     </div>

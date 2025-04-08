@@ -43,8 +43,15 @@ class MidtransNotificationController extends Controller
             $transaksi->status_pembayaran = 'Success';
             if($transaksi->cara_pemesanan == 'offline'){
                 $transaksi->status = 'antrian laundry';
+                $kasirController = new KasirController();
+                $kasirController->antrianLaundrySwitch();
             } else {
                 $transaksi->status = 'menunggu pengambilan';
+            }
+            if($notification->promo_details){
+                $transaksi->kode_promo = $notification->promo_details->code;
+                $transaksi->promo = intval($notification->promo_details->original_amount) - intval($notification->gross_amount);
+                $transaksi->total_harga = intval($notification->gross_amount);
             }
             echo "transactionStatus order_id: " . $order_id ." successfully transfered using " . $type;
         } else if ($transactionStatus == 'pending') {

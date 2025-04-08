@@ -15,7 +15,7 @@
                 </div>
             </div>
 
-            <form action="{{ route('postKasir') }}" method="POST">
+            <form action="{{ route('postKasir') }}" id="formSubmit" method="POST">
                 @csrf
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body">
@@ -366,7 +366,7 @@
                 updatePrices();
             });
 
-            $('form').on('submit', function(e) {
+            $('#formSubmit').on('submit', function(e) {
                 e.preventDefault(); // Mencegah submit tradisional
                 var formData = $(this).serialize(); // Ambil data form
 

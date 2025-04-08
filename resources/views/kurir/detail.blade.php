@@ -139,21 +139,36 @@
                                 <dt class="col-sm-4">Subtotal</dt>
                                 <dd class="col-sm-8">Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }},-</dd>
                             @endif
+                            @if ($transaksi->promo != null)
+                                <dt class="col-sm-4">Total Harga</dt>
+                                <dd class="col-sm-8 fs-5">
+                                    <span class="badge bg-secondary">Rp
+                                        {{ number_format($transaksi->total_harga, 0, ',', '.') }},-
+                                    </span>
+                                </dd>
+                            @endif
                         </div>
                         <div class="col-md-6">
                             @if ($transaksi->pembayaran == 'cod' && $transaksi->status_pembayaran == 'Pending')
                                 <dt class="col-sm-4">Subtotal</dt>
                                 <dd class="col-sm-8">Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }},-</dd>
                             @endif
+
                             <dt class="col-sm-4">Total Ongkir</dt>
                             <dd class="col-sm-8">Rp {{ number_format($transaksi->ongkir, 0, ',', '.') }},-</dd>
 
-                            <dt class="col-sm-4">Total Harga</dt>
-                            <dd class="col-sm-8 fs-5">
-                                <span class="badge bg-secondary">Rp
-                                    {{ number_format($transaksi->total_harga, 0, ',', '.') }},-
-                                </span>
-                            </dd>
+                            @if ($transaksi->promo != null)
+                                <dt class="col-sm-4">Diskon</dt>
+                                <dd class="col-sm-8">Rp {{ number_format($transaksi->promo, 0, ',', '.') }},-</dd>
+                            @else
+                                <dt class="col-sm-4">Total Harga</dt>
+                                <dd class="col-sm-8 fs-5">
+                                    <span class="badge bg-secondary">Rp
+                                        {{ number_format($transaksi->total_harga, 0, ',', '.') }},-
+                                    </span>
+                                </dd>
+                            @endif
+
                         </div>
                     </dl>
                 </div>

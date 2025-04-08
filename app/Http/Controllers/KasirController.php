@@ -146,6 +146,7 @@ class KasirController extends Controller
                 $query->whereIn('status_pembayaran', ['Success', 'Settlement'])
                     ->orWhere(function ($subQuery) {
                         $subQuery->where('cara_pemesanan', 'online')
+                            ->where('pembayaran', 'cod')
                             ->where('status_pembayaran', 'Pending');
                     });
             })
@@ -172,15 +173,49 @@ class KasirController extends Controller
 
         $updateData = ['status' => $request->status];
 
-        // Jika status diubah ke 'menunggu pengantaran', set courier_id ke null
-        if ($request->status == 'menunggu pengantaran') {
+        if ($request->status == 'menunggu pengantaran' || $request->status == 'menunggu pengambilan') {
             $updateData['courier_id'] = null;
+        } else if ($request->status == 'selesai') {
+            $updateData['courier_id'] = null;
+            $updateData['status_pembayaran'] = 'Success';
+        } else if ($request->status == 'antrian laundry') {
+            $updateData['status_pembayaran'] = 'Success';
         }
 
         $transaksi->update($updateData);
 
-        $userController = new UserController();
-        $userController->assignPendingOrders();
+        if ($request->status == 'antrian laundry') {
+            $this->antrianLaundrySwitch();
+        } else if ($request->status == 'menunggu pengantaran' || $request->status == 'menunggu pengambilan') {
+            $userController = new UserController();
+            $userController->assignPendingOrders();
+        }
         return back()->with('status', 'Status transaksi diperbarui');
+    }
+
+    public function antrianLaundrySwitch()
+    {
+        $transaksi = Transaksi::where('status', 'antrian laundry')
+            ->where(function ($query) {
+                $query->whereIn('status_pembayaran', ['Success', 'Settlement'])
+                    ->orWhere(function ($subQuery) {
+                        $subQuery->where('cara_pemesanan', 'online')
+                            ->where('pembayaran', 'cod')
+                            ->where('status_pembayaran', 'Pending');
+                    });
+            })
+            ->oldest('updated_at')
+            ->get();
+        $transaksiProsesLaundryCount = Transaksi::where('status', 'proses laundry')->count();
+
+        foreach ($transaksi as $transaksis) {
+            if ($transaksiProsesLaundryCount >= 5) {
+                break;
+            }
+            $transaksis->status = 'proses laundry';
+            $transaksis->save();
+
+            $transaksiProsesLaundryCount++;
+        }
     }
 }

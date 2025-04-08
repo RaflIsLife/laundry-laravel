@@ -58,8 +58,8 @@
                                                     Laundry
                                                 </option>
 
-                                                <option value="proses laundry"
-                                                    {{ $item->status == 'proses laundry' ? 'selected' : '' }}>Proses
+                                                <option value="Proses laundry"
+                                                    {{ $item->status == 'Proses laundry' ? 'selected' : '' }}>Proses
                                                     Laundry
                                                 </option>
 

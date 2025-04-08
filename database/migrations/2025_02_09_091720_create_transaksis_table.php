@@ -21,6 +21,8 @@ class CreateTransaksisTable extends Migration
             $table->integer('total_harga');
             $table->integer('subtotal');
             $table->integer('qty');
+            $table->integer('promo')->nullable();
+            $table->string('kode_promo')->nullable();
             $table->string('payment_token')->nullable();
             $table->enum('status', ['menunggu pembayaran', 'menunggu pengambilan', 'menunggu pengantaran', 'pengambilan', 'antrian laundry', 'Proses laundry', 'pengantaran', 'menunggu user mengambil', 'selesai']);
             $table->enum('pembayaran', ['qris', 'cod']);

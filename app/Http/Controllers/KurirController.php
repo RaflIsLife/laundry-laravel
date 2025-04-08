@@ -51,6 +51,11 @@ class KurirController extends Controller
         $transaksi->courier_id = null;
         $transaksi->save();
 
+        if($transaksi->status = 'antrian laundry'){
+            $kasirController = new KasirController();
+            $kasirController->antrianLaundrySwitch();
+        }
+
         $courier = auth()->user();
         $courier->status = 'available';
         $courier->daily_completed_orders += 1;
