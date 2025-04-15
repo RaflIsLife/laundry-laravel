@@ -154,7 +154,7 @@ class UserController extends Controller
 
     public function user(Request $request)
     {
-        $transaksi = Transaksi::where('user_id', Auth::id())->whereIn('status_pembayaran', ['Success', 'Pending', 'Settlement'])->whereNotIn('status', ['selesai'])->paginate(10);
+        $transaksi = Transaksi::where('user_id', Auth::id())->whereIn('status_pembayaran', ['Success', 'Pending', 'Settlement'])->whereNotIn('status', ['selesai', 'dibatalkan'])->paginate(10);
         return view('user/home', compact('transaksi'));
     }
     public function detailPesanan(Request $request, Transaksi $transaksi)
@@ -432,6 +432,12 @@ class UserController extends Controller
         }
     }
 
+    public function cancelPesanan(Transaksi $transaksi)
+    {
+        $transaksi->update(['status' => 'dibatalkan', 'status_pembayaran' => 'Denied']);
+        return redirect()->route('user')->with('status', 'Pesanan berhasil dibatalkan');
+    }
+
     public function history(Request $request)
     {
         $transaksi = Transaksi::where('user_id', Auth::id())->where('status', 'selesai')->paginate(10);
@@ -469,7 +475,7 @@ class UserController extends Controller
             'phone' => $request->phone,
         ]);
 
-        $transaksi = Transaksi::where('user_id', Auth::id())->whereNotIn('status', ['selesai'])->get();
+        $transaksi = Transaksi::where('user_id', Auth::id())->whereNotIn('status', ['selesai', 'dibatalkan'])->whereIn('status_pembayaran', ['Success', 'Pending'])->get();
         if ($transaksi) {
             return redirect()->route('profile')->with('status', 'Profil berhasil diperbarui. Namun, alamat gagal diperbarui karena masih ada pesanan yang belum selesai.');
         } else {

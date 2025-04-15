@@ -56,6 +56,14 @@
                                     </a>
                                 </div>
                             @endif
+                            @if ($item->status == 'menunggu pembayaran')
+                                <div class="col-auto">
+                                    <a class="btn btn-sm btn-outline-danger"
+                                        href="{{ route('cancelPesanan', $item) }}">
+                                        Batalkan <i class="bi bi-x-circle-fill"></i>
+                                    </a>
+                                </div>
+                            @endif
                             <div class="col-auto">
                                 <a class="btn btn-sm btn-outline-primary" href="{{ route('detailPesanan', $item->id) }}">
                                     Detail <i class="bi bi-arrow-right"></i>

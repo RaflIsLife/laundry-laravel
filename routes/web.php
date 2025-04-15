@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/user/detailRiwayat/{transaksi}', 'UserController@detailRiwayat')->name('detailRiwayat');
         Route::get('/user/new', 'UserController@pesananBaru')->name('pesananBaru');
         Route::post('/postPesanan', 'UserController@postPesanan')->name('pesananBaru.post');
+        Route::get('/cancelPesanan/{transaksi}', 'UserController@cancelPesanan')->name('cancelPesanan');
         Route::get('/user/history', 'UserController@history')->name('history');
         Route::get('/user/profile', 'UserController@profile')->name('profile');
         Route::post('/user/postProfile', 'UserController@profileUpdate')->name('profile.update');

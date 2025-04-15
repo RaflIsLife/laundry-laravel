@@ -34,48 +34,19 @@
             </div>
 
             <div class="card mb-4">
-                <div class="card-header">Grafik Pemasukan Bulanan</div>
+                <div class="card-header">Grafik Pemasukan</div>
                 <div class="card-body">
                     <canvas id="pemasukanChart"></canvas>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-header">Riwayat Transaksi</div>
+                <div class="card-header">Perbandingan Transaksi Offline dan Online</div>
                 <div class="card-body">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Pelanggan</th>
-                                <th>Tanggal</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($transaksi as $item)
-                                <tr>
-                                    <td>{{ $item->id }}</td>
-                                    <td>{{ $item->user->name }}</td>
-                                    <td>{{ $item->created_at }}</td>
-                                    <td>Rp {{ number_format($item->total_harga, 0, ',', '.') }}</td>
-                                    <td>
-                                        <span class="badge bg-success">
-                                            {{ $item->status }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="container mt-5">
-                <h1 class="text-center mb-4">Perbandingan Transaksi Offline dan Online</h1>
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <canvas id="myChart" width="400" height="400"></canvas>
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <canvas id="myChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -83,12 +54,12 @@
     </div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        var pemasukanData = @json($grafikPemasukan); 
+        var pemasukanData = @json($grafikPemasukan);
 
-        var hari = pemasukanData.map(function(item) {
-            return item.hari;
+        var tanggal = pemasukanData.map(function(item) {
+            return item.tanggal;
         });
         var totalPemasukan = pemasukanData.map(function(item) {
             return item.total_harga;
@@ -98,13 +69,16 @@
         var pemasukanChart = new Chart(ctx1, {
             type: 'line',
             data: {
-                labels: hari,
+                labels: tanggal,
                 datasets: [{
-                    label: 'Pemasukan Harian',
+                    label: 'Table Pemasukan',
                     data: totalPemasukan,
                     borderColor: 'rgba(75, 192, 192, 1)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    pointRadius: 5,
+                    pointHoverRadius: 10,
+                    cubicInterpolationMode: 'monotone',
                 }]
             },
             options: {
@@ -126,7 +100,7 @@
                     data: @json($valuesCaraPemesanan),
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)', // Warna offline
-                        'rgba(54, 162, 235, 0.2)'  // Warna online
+                        'rgba(54, 162, 235, 0.2)' // Warna online
                     ],
                     borderColor: [
                         'rgba(255, 99, 132, 1)',

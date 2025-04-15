@@ -11,20 +11,25 @@ class OwnerController extends Controller
 {
     public function home()
     {
-        $transaksi = Transaksi::all();
+        $transaksi = Transaksi::whereIn('status_pembayaran', ['Success', 'Settlement'])->get();
 
         $user = User::where('role', 'customer')->get();
 
         $grafikPemasukan = Transaksi::whereIn('status_pembayaran', ['Success', 'Settlement'])
             ->select([
-                DB::raw('DAY(created_at) as hari'),
+                DB::raw('DATE(created_at) as tanggal'),
                 DB::raw('SUM(total_harga) as total_harga')
             ])
-            ->groupBy(DB::raw('DAY(created_at)'))
-            ->orderBy(DB::raw('DAY(created_at)'), 'asc')
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->orderBy(DB::raw('DATE(created_at)'), 'asc')
             ->get();
 
         $grafikCaraPemesanan = Transaksi::whereIn('status_pembayaran', ['Success', 'Settlement'])
+            ->select('cara_pemesanan', DB::raw('count(*) as total'))
+            ->groupBy('cara_pemesanan')
+            ->get();
+
+        $grafikPemesanan = Transaksi::whereIn('status_pembayaran', ['Success', 'Settlement'])
             ->select('cara_pemesanan', DB::raw('count(*) as total'))
             ->groupBy('cara_pemesanan')
             ->get();

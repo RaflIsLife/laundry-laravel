@@ -138,7 +138,7 @@ class KasirController extends Controller
 
     public function transaksi()
     {
-        $transaksi = Transaksi::whereNotIn('status', ['selesai'])
+        $transaksi = Transaksi::whereNotIn('status', ['selesai', 'dibatalkan'])
             ->where(function ($query) {
                 $query->whereIn('status_pembayaran', ['Success', 'Settlement'])
                     ->orWhere(function ($subQuery) {
